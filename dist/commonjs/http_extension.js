@@ -40,7 +40,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var http_1 = require("@5minds/http");
-var iam_contracts_1 = require("iam_contracts");
+var core_contracts_1 = require("@process-engine-js/core_contracts");
 var utils_1 = require("@5minds/utils");
 var BluebirdPromise = require("bluebird");
 var busboy = require("connect-busboy");
@@ -58,6 +58,7 @@ var HttpExtension = (function (_super) {
         _this._fayeClient = undefined;
         _this._iamService = undefined;
         _this._httpServer = undefined;
+        _this.config = undefined;
         _this._fayeClient = fayeClient;
         _this._iamService = iamService;
         return _this;
@@ -128,7 +129,7 @@ var HttpExtension = (function (_super) {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, this.iamService.resolveExecutionContext(bearerToken, iam_contracts_1.TokenType.jwt)];
+                        return [4 /*yield*/, this.iamService.resolveExecutionContext(bearerToken, core_contracts_1.TokenType.jwt)];
                     case 2:
                         context = _a.sent();
                         req.context = context;

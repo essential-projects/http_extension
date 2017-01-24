@@ -1,6 +1,7 @@
 import {HttpExtension as BaseHttpExtension} from '@5minds/http';
 import {DependencyInjectionContainer} from '@5minds/addict-ioc';
-import {IIamService, TokenType} from 'iam_contracts';
+import {IIamService} from '@process-engine-js/iam_contracts';
+import {TokenType} from '@process-engine-js/core_contracts';
 import {executeAsExtensionHookAsync as extensionHook} from '@5minds/utils';
 
 import * as BluebirdPromise from 'bluebird';
@@ -19,6 +20,8 @@ export class HttpExtension extends BaseHttpExtension {
   private _fayeClient: any = undefined;
   private _iamService: any = undefined;
   private _httpServer: any = undefined;
+
+  public config: any = undefined;
 
   constructor(container: DependencyInjectionContainer, fayeClient: any, iamService: IIamService) {
     super(container);

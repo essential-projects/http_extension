@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "extension for discovering and mounting components to an HTTP endpoint",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -14,8 +14,8 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-    "@5minds/bootstrapper": "^1.0.1",
-    "@5minds/http": "^1.0.1",
+    "@process-engine-js/core_contracts": "^1.0.2",
+    "@process-engine-js/iam_contracts": "^1.0.2",
     "bluebird": "^3.4.7",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
@@ -29,8 +29,3 @@
     "gulp": "^3.9.1"
   }
 }
-
-
-
-
-
