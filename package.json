@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "extension for discovering and mounting components to an HTTP endpoint",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -14,6 +14,7 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
+    "@process-engine-js/bootstrapper": "^1.0.1",
     "@process-engine-js/core_contracts": "^1.0.2",
     "@process-engine-js/http": "^1.0.1",
     "@process-engine-js/iam_contracts": "^1.0.2",

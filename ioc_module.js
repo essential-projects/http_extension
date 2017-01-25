@@ -1,7 +1,7 @@
 'use strict';
 
 const HttpExtension = require('./dist/commonjs/index').HttpExtension;
-const extensionDiscoveryTag = require('@5minds/bootstrapper').extensionDiscoveryTag;
+const extensionDiscoveryTag = require('@process-engine-js/bootstrapper').extensionDiscoveryTag;
 
 function registerInContainer(container) {
 
