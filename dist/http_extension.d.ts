@@ -1,5 +1,5 @@
-import { HttpExtension as BaseHttpExtension } from '@5minds/http';
-import { DependencyInjectionContainer } from '@5minds/addict-ioc';
+import { HttpExtension as BaseHttpExtension } from '@process-engine-js/http';
+import { DependencyInjectionContainer } from 'addict-ioc';
 import { IIamService } from '@process-engine-js/iam_contracts';
 export declare class HttpExtension extends BaseHttpExtension {
     private _fayeClient;

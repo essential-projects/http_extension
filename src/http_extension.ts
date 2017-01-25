@@ -1,8 +1,8 @@
-import {HttpExtension as BaseHttpExtension} from '@5minds/http';
-import {DependencyInjectionContainer} from '@5minds/addict-ioc';
+import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http';
+import {DependencyInjectionContainer} from 'addict-ioc';
 import {IIamService} from '@process-engine-js/iam_contracts';
 import {TokenType} from '@process-engine-js/core_contracts';
-import {executeAsExtensionHookAsync as extensionHook} from '@5minds/utils';
+import {executeAsExtensionHookAsync as extensionHook} from '@process-engine-js/utils';
 
 import * as BluebirdPromise from 'bluebird';
 import * as busboy from 'connect-busboy';

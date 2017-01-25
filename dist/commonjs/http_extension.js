@@ -39,9 +39,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var http_1 = require("@5minds/http");
+var http_1 = require("@process-engine-js/http");
 var core_contracts_1 = require("@process-engine-js/core_contracts");
-var utils_1 = require("@5minds/utils");
+var utils_1 = require("@process-engine-js/utils");
 var BluebirdPromise = require("bluebird");
 var busboy = require("connect-busboy");
 var compression = require("compression");
