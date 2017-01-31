@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "extension for discovering and mounting components to an HTTP endpoint",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -15,11 +15,11 @@
   ],
   "dependencies": {
     "@process-engine-js/bootstrapper": "^1.0.1",
-    "@process-engine-js/core_contracts": "^1.0.2",
-    "@process-engine-js/http": "^1.0.1",
-    "@process-engine-js/iam_contracts": "^1.0.2",
+    "@process-engine-js/core_contracts": "^1.0.8",
+    "@process-engine-js/http": "^1.0.2",
+    "@process-engine-js/iam_contracts": "^1.0.5",
     "@process-engine-js/utils": "^1.0.0",
-    "addict-ioc": "^1.0.0",
+    "addict-ioc": "^1.0.5",
     "bluebird": "^3.4.7",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
