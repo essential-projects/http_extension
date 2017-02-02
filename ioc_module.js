@@ -8,7 +8,8 @@ function registerInContainer(container) {
   container.register('HttpExtension', HttpExtension)
     .dependencies('container', 'FayeClient', 'IamService')
     .configure('http:http_extension')
-    .tags(extensionDiscoveryTag);
+    .tags(extensionDiscoveryTag)
+    .singleton();
 }
 
 module.exports.registerInContainer = registerInContainer;
