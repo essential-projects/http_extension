@@ -126,20 +126,24 @@ var HttpExtension = (function (_super) {
                         else if (req.cookies.token) {
                             bearerToken = req.cookies.token;
                         }
+                        context = null;
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, this.iamService.resolveExecutionContext(bearerToken, core_contracts_1.TokenType.jwt)];
                     case 2:
                         context = _a.sent();
-                        req.context = context;
-                        next();
                         return [3 /*break*/, 4];
                     case 3:
                         err_1 = _a.sent();
-                        res.status(500).send({ error: err_1.message });
+                        debugInfo('context can not be generated - token invalid');
                         return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                    case 4:
+                        if (context) {
+                            req.context = context;
+                        }
+                        next();
+                        return [2 /*return*/];
                 }
             });
         });

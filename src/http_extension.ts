@@ -85,13 +85,17 @@ export class HttpExtension extends BaseHttpExtension {
           bearerToken = req.cookies.token;
       }
 
+      let context = null;
       try {
-          const context = await this.iamService.resolveExecutionContext(bearerToken, TokenType.jwt);
-          req.context = context;
-          next();
+          context = await this.iamService.resolveExecutionContext(bearerToken, TokenType.jwt);
       } catch (err) {
-          res.status(500).send({ error: err.message });
+        debugInfo('context can not be generated - token invalid');
       }
+
+      if (context) {
+        req.context = context;
+      }
+      next();
   }
 
   public start(): Promise<any> {
