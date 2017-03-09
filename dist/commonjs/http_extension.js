@@ -1,9 +1,14 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -39,6 +44,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var http_1 = require("@process-engine-js/http");
 var core_contracts_1 = require("@process-engine-js/core_contracts");
 var utils_1 = require("@process-engine-js/utils");
@@ -102,9 +108,12 @@ var HttpExtension = (function (_super) {
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(cookieParser());
         app.use(this.extractToken.bind(this));
+        // securing http headers with helmet
         app.use(helmet.hidePoweredBy());
+        // app.use(helmet.ieNoOpen());
         app.use(helmet.noSniff());
         app.use(helmet.frameguard());
+        // https://github.com/helmetjs/x-xss-protection
         app.use(helmet.xssFilter());
         var csp = this.config.csp;
         if (csp) {
@@ -119,11 +128,13 @@ var HttpExtension = (function (_super) {
                     case 0:
                         req.token = null;
                         bearerHeader = req.headers.authorization;
+                        // first try auth header
                         if (typeof bearerHeader !== 'undefined') {
                             bearer = bearerHeader.split(' ');
                             bearerToken = bearer[1];
                         }
                         else if (req.cookies.token) {
+                            // extract token from cookie
                             bearerToken = req.cookies.token;
                         }
                         context = null;
@@ -137,6 +148,7 @@ var HttpExtension = (function (_super) {
                     case 3:
                         err_1 = _a.sent();
                         debugInfo('context can not be generated - token invalid');
+                        res.status(403).json({ error: err_1.message });
                         return [3 /*break*/, 4];
                     case 4:
                         if (context) {
@@ -153,6 +165,7 @@ var HttpExtension = (function (_super) {
         return new BluebirdPromise(function (resolve, reject) {
             _this._server = _this._httpServer.listen(_this.config.server.port, _this.config.server.host, function () {
                 console.log("Started REST API " + _this.config.server.host + ":" + _this.config.server.port);
+                // logger.info(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
                 utils_1.executeAsExtensionHookAsync(_this.onStarted, _this)
                     .then(function (result) {
                     resolve(result);

@@ -90,6 +90,7 @@ export class HttpExtension extends BaseHttpExtension {
           context = await this.iamService.resolveExecutionContext(bearerToken, TokenType.jwt);
       } catch (err) {
         debugInfo('context can not be generated - token invalid');
+        res.status(403).json({ error: err.message });
       }
 
       if (context) {
