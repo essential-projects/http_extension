@@ -1,6 +1,6 @@
 import { HttpExtension as BaseHttpExtension } from '@process-engine-js/http';
 import { DependencyInjectionContainer } from 'addict-ioc';
-import { IIamService } from '@process-engine-js/iam_contracts';
+import { IIamService } from '@process-engine-js/core_contracts';
 export declare class HttpExtension extends BaseHttpExtension {
     private _fayeClient;
     private _iamService;
