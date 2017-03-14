@@ -1,7 +1,6 @@
 import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http';
 import {DependencyInjectionContainer} from 'addict-ioc';
-import {IIamService} from '@process-engine-js/iam_contracts';
-import {TokenType} from '@process-engine-js/core_contracts';
+import { TokenType, IIamService } from '@process-engine-js/core_contracts';
 import {executeAsExtensionHookAsync as extensionHook} from '@process-engine-js/utils';
 
 import * as BluebirdPromise from 'bluebird';
