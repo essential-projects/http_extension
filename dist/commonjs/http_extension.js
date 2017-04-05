@@ -108,9 +108,12 @@ var HttpExtension = (function (_super) {
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(cookieParser());
         app.use(this.extractToken.bind(this));
+        // securing http headers with helmet
         app.use(helmet.hidePoweredBy());
+        // app.use(helmet.ieNoOpen());
         app.use(helmet.noSniff());
         app.use(helmet.frameguard());
+        // https://github.com/helmetjs/x-xss-protection
         app.use(helmet.xssFilter());
         var csp = this.config.csp;
         if (csp) {
@@ -119,17 +122,20 @@ var HttpExtension = (function (_super) {
     };
     HttpExtension.prototype.extractToken = function (req, res, next) {
         return __awaiter(this, void 0, void 0, function () {
-            var bearerToken, bearerHeader, bearer, context, err_1;
+            var _this = this;
+            var bearerToken, bearerHeader, bearer, context, err_1, doRefresh_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         req.token = null;
                         bearerHeader = req.headers.authorization;
+                        // first try auth header
                         if (typeof bearerHeader !== 'undefined') {
                             bearer = bearerHeader.split(' ');
                             bearerToken = bearer[1];
                         }
                         else if (req.cookies.token) {
+                            // extract token from cookie
                             bearerToken = req.cookies.token;
                         }
                         context = null;
@@ -143,7 +149,23 @@ var HttpExtension = (function (_super) {
                     case 3:
                         err_1 = _a.sent();
                         debugInfo('context can not be generated - token invalid');
-                        res.status(403).json({ error: err_1.message });
+                        //Remove token
+                        res.cookie('token', '');
+                        doRefresh_1 = false;
+                        if (this.config.routeConfiguration) {
+                            Object.keys(this.config.routeConfiguration).forEach(function (routeNeedle) {
+                                if (req.url.match(new RegExp('^' + routeNeedle.replace(/\//g, '\\/').replace(/\*/g, '.{0,}') + '$', 'i'))) {
+                                    doRefresh_1 = _this.config.routeConfiguration[routeNeedle].refreshOnInvalidToken;
+                                }
+                            });
+                        }
+                        if (doRefresh_1) {
+                            res.header['Refresh'] = '0;url=' + req.url;
+                            res.status(307);
+                        }
+                        else {
+                            res.status(403).json({ error: err_1.message });
+                        }
                         return [3 /*break*/, 4];
                     case 4:
                         if (context) {
@@ -160,6 +182,7 @@ var HttpExtension = (function (_super) {
         return new BluebirdPromise(function (resolve, reject) {
             _this._server = _this._httpServer.listen(_this.config.server.port, _this.config.server.host, function () {
                 console.log("Started REST API " + _this.config.server.host + ":" + _this.config.server.port);
+                // logger.info(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
                 utils_1.executeAsExtensionHookAsync(_this.onStarted, _this)
                     .then(function (result) {
                     resolve(result);

@@ -89,7 +89,25 @@ export class HttpExtension extends BaseHttpExtension {
           context = await this.iamService.resolveExecutionContext(bearerToken, TokenType.jwt);
       } catch (err) {
         debugInfo('context can not be generated - token invalid');
-        res.status(403).json({ error: err.message });
+
+        //Remove token
+        res.cookie('token', '');
+
+        let doRefresh = false;
+        if (this.config.routeConfiguration) {
+          Object.keys(this.config.routeConfiguration).forEach((routeNeedle) => {
+            if (req.url.match(new RegExp('^' + routeNeedle.replace(/\//g, '\\/').replace(/\*/g, '.{0,}') + '$', 'i'))) {
+              doRefresh = this.config.routeConfiguration[routeNeedle].refreshOnInvalidToken;
+            }
+          });
+        }
+
+        if (doRefresh) {
+          res.header['Refresh'] = '0;url=' + req.url;
+          res.status(307);
+        } else {
+          res.status(403).json({ error: err.message });
+        }
       }
 
       if (context) {
