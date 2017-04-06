@@ -108,12 +108,9 @@ var HttpExtension = (function (_super) {
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(cookieParser());
         app.use(this.extractToken.bind(this));
-        // securing http headers with helmet
         app.use(helmet.hidePoweredBy());
-        // app.use(helmet.ieNoOpen());
         app.use(helmet.noSniff());
         app.use(helmet.frameguard());
-        // https://github.com/helmetjs/x-xss-protection
         app.use(helmet.xssFilter());
         var csp = this.config.csp;
         if (csp) {
@@ -129,13 +126,11 @@ var HttpExtension = (function (_super) {
                     case 0:
                         req.token = null;
                         bearerHeader = req.headers.authorization;
-                        // first try auth header
                         if (typeof bearerHeader !== 'undefined') {
                             bearer = bearerHeader.split(' ');
                             bearerToken = bearer[1];
                         }
                         else if (req.cookies.token) {
-                            // extract token from cookie
                             bearerToken = req.cookies.token;
                         }
                         context = null;
@@ -149,7 +144,6 @@ var HttpExtension = (function (_super) {
                     case 3:
                         err_1 = _a.sent();
                         debugInfo('context can not be generated - token invalid');
-                        //Remove token
                         res.cookie('token', '');
                         doRefresh_1 = false;
                         if (this.config.routeConfiguration) {
@@ -182,7 +176,6 @@ var HttpExtension = (function (_super) {
         return new BluebirdPromise(function (resolve, reject) {
             _this._server = _this._httpServer.listen(_this.config.server.port, _this.config.server.host, function () {
                 console.log("Started REST API " + _this.config.server.host + ":" + _this.config.server.port);
-                // logger.info(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
                 utils_1.executeAsExtensionHookAsync(_this.onStarted, _this)
                     .then(function (result) {
                     resolve(result);
