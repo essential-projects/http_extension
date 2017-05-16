@@ -1,14 +1,9 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -44,7 +39,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 var http_1 = require("@process-engine-js/http");
 var core_contracts_1 = require("@process-engine-js/core_contracts");
 var utils_1 = require("@process-engine-js/utils");
@@ -56,6 +50,7 @@ var cookieParser = require("cookie-parser");
 var helmet = require("helmet");
 var debug = require("debug");
 var http = require("http");
+var cors = require("cors");
 var debugInfo = debug('http_extension:info');
 var HttpExtension = (function (_super) {
     __extends(HttpExtension, _super);
@@ -108,6 +103,9 @@ var HttpExtension = (function (_super) {
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(cookieParser());
         app.use(this.extractToken.bind(this));
+        if (!this.config.disableCors) {
+            app.use(cors());
+        }
         app.use(helmet.hidePoweredBy());
         app.use(helmet.noSniff());
         app.use(helmet.frameguard());

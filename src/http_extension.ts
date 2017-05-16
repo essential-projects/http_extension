@@ -11,6 +11,7 @@ import * as cookieParser from 'cookie-parser';
 import * as helmet from 'helmet';
 import * as debug from 'debug';
 import * as http from 'http';
+import * as cors from 'cors';
 
 const debugInfo = debug('http_extension:info');
 
@@ -56,6 +57,10 @@ export class HttpExtension extends BaseHttpExtension {
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(cookieParser());
     app.use(this.extractToken.bind(this));
+
+    if (!this.config.disableCors) {
+      app.use(cors());
+    }
 
     // securing http headers with helmet
     app.use(helmet.hidePoweredBy());
