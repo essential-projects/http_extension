@@ -1,9 +1,14 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -39,6 +44,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var http_1 = require("@process-engine-js/http");
 var core_contracts_1 = require("@process-engine-js/core_contracts");
 var utils_1 = require("@process-engine-js/utils");
@@ -54,19 +60,19 @@ var cors = require("cors");
 var debugInfo = debug('http_extension:info');
 var HttpExtension = (function (_super) {
     __extends(HttpExtension, _super);
-    function HttpExtension(container, fayeClient, iamService) {
+    function HttpExtension(container, messageBusAdapter, iamService) {
         var _this = _super.call(this, container) || this;
-        _this._fayeClient = undefined;
+        _this._messageBusAdapter = undefined;
         _this._iamService = undefined;
         _this._httpServer = undefined;
         _this.config = undefined;
-        _this._fayeClient = fayeClient;
+        _this._messageBusAdapter = messageBusAdapter;
         _this._iamService = iamService;
         return _this;
     }
-    Object.defineProperty(HttpExtension.prototype, "fayeClient", {
+    Object.defineProperty(HttpExtension.prototype, "messageBusAdapter", {
         get: function () {
-            return this._fayeClient;
+            return this._messageBusAdapter;
         },
         enumerable: true,
         configurable: true
@@ -95,7 +101,7 @@ var HttpExtension = (function (_super) {
     };
     HttpExtension.prototype.initializeAppExtensions = function (app) {
         this._httpServer = http.createServer(app);
-        this.fayeClient.initialize(this._httpServer);
+        this.messageBusAdapter.initialize(this._httpServer);
     };
     HttpExtension.prototype.initializeMiddlewareBeforeRouters = function (app) {
         app.use(busboy());

@@ -6,7 +6,7 @@ const extensionDiscoveryTag = require('@process-engine-js/bootstrapper').extensi
 function registerInContainer(container) {
 
   container.register('HttpExtension', HttpExtension)
-    .dependencies('container', 'FayeClient', 'IamService')
+    .dependencies('container', 'MessageBusAdapter', 'IamService')
     .configure('http:http_extension')
     .tags(extensionDiscoveryTag)
     .singleton();

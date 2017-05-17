@@ -17,21 +17,21 @@ const debugInfo = debug('http_extension:info');
 
 export class HttpExtension extends BaseHttpExtension {
 
-  private _fayeClient: any = undefined;
+  private _messageBusAdapter: any = undefined;
   private _iamService: any = undefined;
   private _httpServer: any = undefined;
 
   public config: any = undefined;
 
-  constructor(container: DependencyInjectionContainer, fayeClient: any, iamService: IIamService) {
+  constructor(container: DependencyInjectionContainer, messageBusAdapter: any, iamService: IIamService) {
     super(container);
 
-    this._fayeClient = fayeClient;
+    this._messageBusAdapter = messageBusAdapter;
     this._iamService = iamService;
   }
 
-  private get fayeClient(): any {
-    return this._fayeClient;
+  private get messageBusAdapter(): any {
+    return this._messageBusAdapter;
   }
 
   private get iamService(): any {
@@ -48,7 +48,7 @@ export class HttpExtension extends BaseHttpExtension {
 
   initializeAppExtensions(app) {
     this._httpServer = http.createServer(app);
-    this.fayeClient.initialize(this._httpServer);
+    this.messageBusAdapter.initialize(this._httpServer);
   }
 
   initializeMiddlewareBeforeRouters(app) {
