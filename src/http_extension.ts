@@ -1,5 +1,5 @@
-import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http';
-import {DependencyInjectionContainer} from 'addict-ioc';
+import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http_node';
+import {Container} from 'addict-ioc';
 import { TokenType, IIamService } from '@process-engine-js/core_contracts';
 import {executeAsExtensionHookAsync as extensionHook} from '@process-engine-js/utils';
 
@@ -23,7 +23,7 @@ export class HttpExtension extends BaseHttpExtension {
 
   public config: any = undefined;
 
-  constructor(container: DependencyInjectionContainer, messageBusAdapter: any, iamService: IIamService) {
+  constructor(container: Container, messageBusAdapter: any, iamService: IIamService) {
     super(container);
 
     this._messageBusAdapter = messageBusAdapter;
@@ -140,7 +140,7 @@ export class HttpExtension extends BaseHttpExtension {
       });
 
     }).then(() => {
-      console.log('AJSKDHGLAKSJGDJHASGDJHAGSJK');
+      console.log('Backend started successfully');
     });
   }
 }
