@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "extension for discovering and mounting components to an HTTP endpoint",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
