@@ -18,8 +18,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
-    return { next: verb(0), "throw": verb(1), "return": verb(2) };
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -90,11 +90,11 @@ var HttpExtension = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         this.iamService.initialize();
-                        return [4 /*yield*/, _super.prototype.initialize.call(this)];
+                        return [4, _super.prototype.initialize.call(this)];
                     case 1:
                         _a.sent();
                         debugInfo('initialized');
-                        return [2 /*return*/];
+                        return [2];
                 }
             });
         });
@@ -141,10 +141,10 @@ var HttpExtension = (function (_super) {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, this.iamService.resolveExecutionContext(bearerToken, core_contracts_1.TokenType.jwt)];
+                        return [4, this.iamService.resolveExecutionContext(bearerToken, core_contracts_1.TokenType.jwt)];
                     case 2:
                         context = _a.sent();
-                        return [3 /*break*/, 4];
+                        return [3, 4];
                     case 3:
                         err_1 = _a.sent();
                         debugInfo('context can not be generated - token invalid');
@@ -164,13 +164,13 @@ var HttpExtension = (function (_super) {
                         else {
                             res.status(403).json({ error: err_1.message });
                         }
-                        return [3 /*break*/, 4];
+                        return [3, 4];
                     case 4:
                         if (context) {
                             req.context = context;
                         }
                         next();
-                        return [2 /*return*/];
+                        return [2];
                 }
             });
         });
