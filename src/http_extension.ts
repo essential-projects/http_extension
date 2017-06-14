@@ -1,5 +1,5 @@
 import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http_node';
-import {Container} from 'addict-ioc';
+import {Container, IInstanceWrapper} from 'addict-ioc';
 import { TokenType, IIamService } from '@process-engine-js/core_contracts';
 import {executeAsExtensionHookAsync as extensionHook} from '@process-engine-js/utils';
 
@@ -23,7 +23,7 @@ export class HttpExtension extends BaseHttpExtension {
 
   public config: any = undefined;
 
-  constructor(container: Container, messageBusAdapter: any, iamService: IIamService) {
+  constructor(container: Container<IInstanceWrapper<any>>, messageBusAdapter: any, iamService: IIamService) {
     super(container);
 
     this._messageBusAdapter = messageBusAdapter;
@@ -41,17 +41,17 @@ export class HttpExtension extends BaseHttpExtension {
   public async initialize(): Promise<void> {
 
     this.iamService.initialize();
-    
+
     await super.initialize();
     debugInfo('initialized');
   }
 
-  initializeAppExtensions(app) {
+  public initializeAppExtensions(app) {
     this._httpServer = http.createServer(app);
     this.messageBusAdapter.initialize(this._httpServer);
   }
 
-  initializeMiddlewareBeforeRouters(app) {
+  public initializeMiddlewareBeforeRouters(app) {
     app.use(busboy());
     app.use(compression());
     app.use(bodyParser.urlencoded({ extended: true }));
@@ -95,7 +95,7 @@ export class HttpExtension extends BaseHttpExtension {
       } catch (err) {
         debugInfo('context can not be generated - token invalid');
 
-        //Remove token
+        // Remove token
         res.cookie('token', '');
 
         let doRefresh = false;
