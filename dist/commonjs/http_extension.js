@@ -31,7 +31,6 @@ class HttpExtension extends http_node_1.HttpExtension {
     }
     initializeAppExtensions(app) {
         this._httpServer = http.createServer(app);
-        this.messageBusAdapter.initialize(this._httpServer);
     }
     initializeMiddlewareBeforeRouters(app) {
         app.use(busboy());
@@ -92,6 +91,7 @@ class HttpExtension extends http_node_1.HttpExtension {
     }
     start() {
         return new BluebirdPromise((resolve, reject) => {
+            this.messageBusAdapter.start(this._httpServer);
             this._server = this._httpServer.listen(this.config.server.port, this.config.server.host, () => {
                 console.log(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
                 utils_1.executeAsExtensionHookAsync(this.onStarted, this)
