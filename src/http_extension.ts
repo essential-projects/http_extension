@@ -38,14 +38,6 @@ export class HttpExtension extends BaseHttpExtension {
     return this._iamService;
   }
 
-  public async initialize(): Promise<void> {
-
-    this.iamService.initialize();
-
-    await super.initialize();
-    debugInfo('initialized');
-  }
-
   public initializeAppExtensions(app) {
     this._httpServer = http.createServer(app);
     this.messageBusAdapter.initialize(this._httpServer);
