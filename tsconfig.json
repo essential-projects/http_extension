@@ -3,11 +3,14 @@
     "enableAutoDiscovery": true
   },
   "compilerOptions": {
+    "skipLibCheck": true,
     "module": "commonjs",
     "target": "es2017",
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "sourceMap": true,
+    "experimentalDecorators": true
   }
 }

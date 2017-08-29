@@ -31,6 +31,8 @@
     "loggerhythm": "1.0.0"
   },
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "gulptraum": "^2.2.1",
+    "gulptraum-typescript": "^1.3.2"
   }
 }

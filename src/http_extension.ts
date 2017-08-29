@@ -54,7 +54,13 @@ export class HttpExtension extends BaseHttpExtension {
   public initializeMiddlewareBeforeRouters(app) {
     app.use(busboy());
     app.use(compression());
-    app.use(bodyParser.urlencoded({ extended: true }));
+    const urlEncodedOpts: any = {
+      extended: true
+    };
+    if (this.config && this.config.parseLimit) {
+      urlEncodedOpts.limit = this.config.parseLimit;
+    }
+    app.use(bodyParser.urlencoded(urlEncodedOpts));
     app.use(cookieParser());
     app.use(this.extractToken.bind(this));
 
