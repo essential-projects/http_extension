@@ -115,7 +115,7 @@ export class HttpExtension extends BaseHttpExtension {
   public start(): Promise<any> {
 
     return new BluebirdPromise((resolve, reject) => {
-      this.messageBusAdapter.start(this._httpServer);
+      //this.messageBusAdapter.start(this._httpServer);
       this._server = this._httpServer.listen(this.config.server.port, this.config.server.host, () => {
         console.log(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
 
