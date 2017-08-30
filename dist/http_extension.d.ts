@@ -9,7 +9,6 @@ export declare class HttpExtension extends BaseHttpExtension {
     constructor(container: Container<IInstanceWrapper<any>>, messageBusAdapter: any, iamService: IIamService);
     private readonly messageBusAdapter;
     private readonly iamService;
-    initialize(): Promise<void>;
     initializeAppExtensions(app: any): void;
     initializeMiddlewareBeforeRouters(app: any): void;
     private extractToken(req, res, next);

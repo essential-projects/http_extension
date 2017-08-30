@@ -38,17 +38,8 @@ export class HttpExtension extends BaseHttpExtension {
     return this._iamService;
   }
 
-  public async initialize(): Promise<void> {
-
-    this.iamService.initialize();
-
-    await super.initialize();
-    debugInfo('initialized');
-  }
-
   public initializeAppExtensions(app) {
     this._httpServer = http.createServer(app);
-    this.messageBusAdapter.initialize(this._httpServer);
   }
 
   public initializeMiddlewareBeforeRouters(app) {
@@ -130,7 +121,7 @@ export class HttpExtension extends BaseHttpExtension {
   public start(): Promise<any> {
 
     return new BluebirdPromise((resolve, reject) => {
-
+      //this.messageBusAdapter.start(this._httpServer);
       this._server = this._httpServer.listen(this.config.server.port, this.config.server.host, () => {
         console.log(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
 

@@ -29,14 +29,8 @@ class HttpExtension extends http_node_1.HttpExtension {
     get iamService() {
         return this._iamService;
     }
-    async initialize() {
-        this.iamService.initialize();
-        await super.initialize();
-        debugInfo('initialized');
-    }
     initializeAppExtensions(app) {
         this._httpServer = http.createServer(app);
-        this.messageBusAdapter.initialize(this._httpServer);
     }
     initializeMiddlewareBeforeRouters(app) {
         app.use(busboy());
