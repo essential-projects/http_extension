@@ -2,6 +2,7 @@ import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http_node';
 import {Container, IInstanceWrapper} from 'addict-ioc';
 import { TokenType, IIamService } from '@process-engine-js/core_contracts';
 import {executeAsExtensionHookAsync as extensionHook} from '@process-engine-js/utils';
+import {IMessageBusAdapter} from '@process-engine-js/messagebus_contracts';
 
 import * as BluebirdPromise from 'bluebird';
 import * as busboy from 'connect-busboy';
@@ -17,20 +18,20 @@ const debugInfo = debug('http_extension:info');
 
 export class HttpExtension extends BaseHttpExtension {
 
-  private _messageBusAdapter: any = undefined;
-  private _iamService: any = undefined;
+  private _messageBusAdapter: IMessageBusAdapter = undefined;
+  private _iamService: IIamService = undefined;
   private _httpServer: any = undefined;
 
   public config: any = undefined;
 
-  constructor(container: Container<IInstanceWrapper<any>>, messageBusAdapter: any, iamService: IIamService) {
+  constructor(container: Container<IInstanceWrapper<any>>, messageBusAdapter: IMessageBusAdapter, iamService: IIamService) {
     super(container);
 
     this._messageBusAdapter = messageBusAdapter;
     this._iamService = iamService;
   }
 
-  private get messageBusAdapter(): any {
+  private get messageBusAdapter(): IMessageBusAdapter {
     return this._messageBusAdapter;
   }
 
@@ -119,9 +120,8 @@ export class HttpExtension extends BaseHttpExtension {
   }
 
   public start(): Promise<any> {
-
     return new BluebirdPromise((resolve, reject) => {
-      //this.messageBusAdapter.start(this._httpServer);
+      this.messageBusAdapter.start(this._httpServer);
       this._server = this._httpServer.listen(this.config.server.port, this.config.server.host, () => {
         console.log(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
 

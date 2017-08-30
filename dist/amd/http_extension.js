@@ -86,6 +86,7 @@ define(["require", "exports", "@process-engine-js/http_node", "@process-engine-j
         }
         start() {
             return new BluebirdPromise((resolve, reject) => {
+                this.messageBusAdapter.start(this._httpServer);
                 this._server = this._httpServer.listen(this.config.server.port, this.config.server.host, () => {
                     console.log(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
                     utils_1.executeAsExtensionHookAsync(this.onStarted, this)

@@ -18,6 +18,7 @@
     "@process-engine-js/core_contracts": "^1.0.8",
     "@process-engine-js/http_node": "^1.0.0",
     "@process-engine-js/iam_contracts": "^1.0.5",
+    "@process-engine-js/messagebus_contracts": "^1.0.14",
     "@process-engine-js/utils": "^1.0.0",
     "addict-ioc": "^2.0.0",
     "bluebird": "^3.4.7",
