@@ -35,7 +35,13 @@ class HttpExtension extends http_node_1.HttpExtension {
     initializeMiddlewareBeforeRouters(app) {
         app.use(busboy());
         app.use(compression());
-        app.use(bodyParser.urlencoded({ extended: true }));
+        const urlEncodedOpts = {
+            extended: true
+        };
+        if (this.config && this.config.parseLimit) {
+            urlEncodedOpts.limit = this.config.parseLimit;
+        }
+        app.use(bodyParser.urlencoded(urlEncodedOpts));
         app.use(cookieParser());
         app.use(this.extractToken.bind(this));
         if (!this.config.disableCors) {

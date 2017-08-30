@@ -24,7 +24,13 @@ define(["require", "exports", "@process-engine-js/http_node", "@process-engine-j
         initializeMiddlewareBeforeRouters(app) {
             app.use(busboy());
             app.use(compression());
-            app.use(bodyParser.urlencoded({ extended: true }));
+            const urlEncodedOpts = {
+                extended: true
+            };
+            if (this.config && this.config.parseLimit) {
+                urlEncodedOpts.limit = this.config.parseLimit;
+            }
+            app.use(bodyParser.urlencoded(urlEncodedOpts));
             app.use(cookieParser());
             app.use(this.extractToken.bind(this));
             if (!this.config.disableCors) {
