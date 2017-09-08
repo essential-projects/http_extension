@@ -32,7 +32,7 @@
     "loggerhythm": "1.0.1"
   },
   "devDependencies": {
-    "@process-engine-js/tslint-config": "^1.0.0",
+    "@process-engine-js/tslint-config": "^1.0.1",
     "@types/body-parser": "^1.16.5",
     "@types/cookie-parser": "^1.4.1",
     "@types/debug": "0.0.30",
