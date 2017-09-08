@@ -19,7 +19,7 @@
     "@process-engine-js/http_node": "^2.0.0",
     "@process-engine-js/iam_contracts": "^2.0.0",
     "@process-engine-js/messagebus_contracts": "^2.0.0",
-    gulptraum"@process-engine-js/utils": "^2.0.0",
+    "@process-engine-js/utils": "^2.0.0",
     "addict-ioc": "^2.2.8",
     "bluebird": "^3.4.7",
     "body-parser": "^1.15.2",
