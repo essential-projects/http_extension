@@ -1,18 +1,18 @@
+import { IIamService, TokenType } from '@process-engine-js/core_contracts';
 import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http_node';
-import {Container, IInstanceWrapper} from 'addict-ioc';
-import { TokenType, IIamService } from '@process-engine-js/core_contracts';
-import {executeAsExtensionHookAsync as extensionHook} from '@process-engine-js/utils';
 import {IMessageBusAdapter} from '@process-engine-js/messagebus_contracts';
+import {executeAsExtensionHookAsync as extensionHook} from '@process-engine-js/utils';
+import {Container, IInstanceWrapper} from 'addict-ioc';
 
 import * as BluebirdPromise from 'bluebird';
-import * as busboy from 'connect-busboy';
-import * as compression from 'compression';
 import * as bodyParser from 'body-parser';
+import * as compression from 'compression';
+import * as busboy from 'connect-busboy';
 import * as cookieParser from 'cookie-parser';
-import * as helmet from 'helmet';
-import * as debug from 'debug';
-import * as http from 'http';
 import * as cors from 'cors';
+import * as debug from 'debug';
+import * as helmet from 'helmet';
+import * as http from 'http';
 
 const debugInfo = debug('http_extension:info');
 
@@ -47,7 +47,7 @@ export class HttpExtension extends BaseHttpExtension {
     app.use(busboy());
     app.use(compression());
     const urlEncodedOpts: any = {
-      extended: true
+      extended: true,
     };
     if (this.config && this.config.parseLimit) {
       urlEncodedOpts.limit = this.config.parseLimit;
