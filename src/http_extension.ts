@@ -1,7 +1,7 @@
 import { IIamService, TokenType } from '@process-engine-js/core_contracts';
+import {runtime} from '@process-engine-js/foundation';
 import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http_node';
 import {IMessageBusAdapter} from '@process-engine-js/messagebus_contracts';
-import {executeAsExtensionHookAsync as extensionHook} from '@process-engine-js/utils';
 import {Container, IInstanceWrapper} from 'addict-ioc';
 
 import * as BluebirdPromise from 'bluebird';
@@ -127,7 +127,7 @@ export class HttpExtension extends BaseHttpExtension {
 
         // logger.info(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
 
-        extensionHook(this.onStarted, this)
+        runtime.invokeAsPromiseIfPossible(this.onStarted, this)
           .then((result) => {
             resolve(result);
           })
