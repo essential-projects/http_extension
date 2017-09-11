@@ -3,9 +3,9 @@
     "enableAutoDiscovery": true
   },
   "compilerOptions": {
-    "skipLibCheck": true,
     "module": "commonjs",
     "target": "es2017",
+    "jsx": "react",
     "lib": [
       "es2017",
       "dom"
