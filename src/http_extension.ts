@@ -4,7 +4,6 @@ import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http_node';
 import {IMessageBusAdapter} from '@process-engine-js/messagebus_contracts';
 import {Container, IInstanceWrapper} from 'addict-ioc';
 
-import * as BluebirdPromise from 'bluebird';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as busboy from 'connect-busboy';
@@ -120,12 +119,10 @@ export class HttpExtension extends BaseHttpExtension {
   }
 
   public start(): Promise<any> {
-    return new BluebirdPromise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       this.messageBusAdapter.start(this._httpServer);
       this._server = this._httpServer.listen(this.config.server.port, this.config.server.host, () => {
         console.log(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
-
-        // logger.info(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
 
         runtime.invokeAsPromiseIfPossible(this.onStarted, this)
           .then((result) => {

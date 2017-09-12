@@ -21,7 +21,6 @@
     "@process-engine-js/messagebus_contracts": "^2.0.0",
     "@process-engine-js/foundation": "^1.0.0",
     "addict-ioc": "^2.2.8",
-    "bluebird": "^3.4.7",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
     "connect-busboy": "0.0.2",
