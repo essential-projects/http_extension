@@ -28,8 +28,7 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.3",
     "debug": "^2.6.0",
-    "helmet": "^3.4.0",
-    "loggerhythm": "1.0.1"
+    "helmet": "^3.4.0"
   },
   "devDependencies": {
     "@process-engine-js/tslint-config": "^1.0.1",
