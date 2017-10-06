@@ -122,7 +122,6 @@ export class HttpExtension extends BaseHttpExtension {
     return new Promise((resolve, reject) => {
       this.messageBusAdapter.start(this._httpServer);
       this._server = this._httpServer.listen(this.config.server.port, this.config.server.host, () => {
-        console.log(`Started REST API ${this.config.server.host}:${this.config.server.port}`);
 
         runtime.invokeAsPromiseIfPossible(this.onStarted, this)
           .then((result) => {
@@ -133,8 +132,6 @@ export class HttpExtension extends BaseHttpExtension {
           });
       });
 
-    }).then(() => {
-      console.log('Backend started successfully');
     });
   }
 }
