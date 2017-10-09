@@ -1,5 +1,5 @@
 {
-  "name": "@process-engine-js/http_extension",
+  "name": "@essential-projects/http_extension",
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
@@ -14,12 +14,12 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-    "@process-engine-js/bootstrapper": "^2.0.0",
-    "@process-engine-js/core_contracts": "^2.0.0",
-    "@process-engine-js/http_node": "^2.0.0",
-    "@process-engine-js/iam_contracts": "^2.0.0",
-    "@process-engine-js/messagebus_contracts": "^2.0.0",
-    "@process-engine-js/foundation": "^1.0.0",
+    "@essential-projects/bootstrapper": "^2.0.0",
+    "@essential-projects/core_contracts": "^2.0.0",
+    "@essential-projects/http_node": "^2.0.0",
+    "@essential-projects/iam_contracts": "^2.0.0",
+    "@essential-projects/messagebus_contracts": "^2.0.0",
+    "@essential-projects/foundation": "^1.0.0",
     "addict-ioc": "^2.2.8",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
@@ -30,7 +30,7 @@
     "helmet": "^3.4.0"
   },
   "devDependencies": {
-    "@process-engine-js/tslint-config": "^1.0.1",
+    "@essential-projects/tslint-config": "^1.0.1",
     "@types/body-parser": "^1.16.5",
     "@types/cookie-parser": "^1.4.1",
     "@types/debug": "0.0.30",

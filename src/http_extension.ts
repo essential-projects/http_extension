@@ -1,7 +1,7 @@
-import { IIamService, TokenType } from '@process-engine-js/core_contracts';
-import {runtime} from '@process-engine-js/foundation';
-import {HttpExtension as BaseHttpExtension} from '@process-engine-js/http_node';
-import {IMessageBusAdapter} from '@process-engine-js/messagebus_contracts';
+import { IIamService, TokenType } from '@essential-projects/core_contracts';
+import {runtime} from '@essential-projects/foundation';
+import {HttpExtension as BaseHttpExtension} from '@essential-projects/http_node';
+import {IMessageBusAdapter} from '@essential-projects/messagebus_contracts';
 import {Container, IInstanceWrapper} from 'addict-ioc';
 
 import * as bodyParser from 'body-parser';
