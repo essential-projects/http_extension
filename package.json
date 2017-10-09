@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "2.0.3",
+  "version": "0.1.0",
   "description": "extension for discovering and mounting components to an HTTP endpoint",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -14,12 +14,12 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-    "@essential-projects/bootstrapper": "^2.0.0",
-    "@essential-projects/core_contracts": "^2.0.0",
-    "@essential-projects/http_node": "^2.0.0",
-    "@essential-projects/iam_contracts": "^2.0.0",
-    "@essential-projects/messagebus_contracts": "^2.0.0",
-    "@essential-projects/foundation": "^1.0.0",
+  "@essential-projects/bootstrapper": "^0.1.0",
+  "@essential-projects/core_contracts": "^0.1.0",
+  "@essential-projects/http_node": "^0.1.0",
+  "@essential-projects/iam_contracts": "^0.1.0",
+  "@essential-projects/messagebus_contracts": "^0.1.0",
+  "@essential-projects/foundation": "^0.1.0",
     "addict-ioc": "^2.2.8",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
@@ -30,7 +30,7 @@
     "helmet": "^3.4.0"
   },
   "devDependencies": {
-    "@essential-projects/tslint-config": "^1.0.1",
+  "@essential-projects/tslint-config": "^0.1.0",
     "@types/body-parser": "^1.16.5",
     "@types/cookie-parser": "^1.4.1",
     "@types/debug": "0.0.30",
