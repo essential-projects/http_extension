@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "@essential-projects/bootstrapper": "^0.1.0",
-    "@essential-projects/core_contracts": "^0.1.0",
+    "@essential-projects/core_contracts": "^0.2.1",
     "@essential-projects/http_node": "^0.1.0",
     "@essential-projects/iam_contracts": "^0.1.0",
     "@essential-projects/messagebus_contracts": "^0.1.0",
