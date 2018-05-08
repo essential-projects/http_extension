@@ -16,7 +16,7 @@
   "dependencies": {
     "@essential-projects/bootstrapper": "^1.0.0",
     "@essential-projects/core_contracts": "^1.0.0",
-    "@essential-projects/http_node": "^1.0.0",
+    "@essential-projects/http_node": "feature~shutdown_database_connection",
     "@essential-projects/iam_contracts": "^1.0.0",
     "@essential-projects/messagebus_contracts": "^1.0.0",
     "@essential-projects/foundation": "^1.0.0",
