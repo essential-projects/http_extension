@@ -19,7 +19,7 @@ export class HttpExtension extends BaseHttpExtension {
 
   private _messageBusAdapter: IMessageBusAdapter = undefined;
   private _iamService: IIamService = undefined;
-  private _httpServer: any = undefined;
+  private _httpServer: http.Server = undefined;
 
   public config: any = undefined;
 
