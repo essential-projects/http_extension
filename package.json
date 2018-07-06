@@ -9,6 +9,7 @@
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
   "contributors": [
+    "Christian Werner <christian.werner@5minds.de>",
     "Sebastian Meier <sebastian.meier@5minds.de>",
     "Patrick Pötschke <patrick.poetschke@quantusflow.com>",
     "Simon Reymann <simon.reymann@quantusflow.com>"
