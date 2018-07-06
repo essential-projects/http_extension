@@ -1,7 +1,10 @@
 import {runtime} from '@essential-projects/foundation';
 import {HttpExtension as BaseHttpExtension} from '@essential-projects/http_node';
-import {IIAMService, IIdentity, IIdentityService} from '@essential-projects/iam_contracts';
+import {IIdentity, IIdentityService} from '@essential-projects/iam_contracts';
 import {IMessageBusAdapter} from '@essential-projects/messagebus_contracts';
+
+import {ExecutionContext} from '@process-engine/process_engine_contracts';
+
 import {Container, IInstanceWrapper} from 'addict-ioc';
 
 import * as bodyParser from 'body-parser';
@@ -18,7 +21,7 @@ const debugInfo: debug.IDebugger = debug('http_extension:info');
 export class HttpExtension extends BaseHttpExtension {
 
   private _messageBusAdapter: IMessageBusAdapter = undefined;
-  private _iamService: IIAMService = undefined;
+  private _identityService: IIdentityService = undefined;
   private _httpServer: http.Server = undefined;
 
   public config: any = undefined;
@@ -26,19 +29,21 @@ export class HttpExtension extends BaseHttpExtension {
   private temporaryRedirectCode: number = 307;
   private forbiddenErrorCode: number = 403;
 
-  constructor(container: Container<IInstanceWrapper<any>>, messageBusAdapter: IMessageBusAdapter, iamService: IIAMService) {
+  constructor(container: Container<IInstanceWrapper<any>>,
+              messageBusAdapter: IMessageBusAdapter,
+              identityService: IIdentityService) {
     super(container);
 
     this._messageBusAdapter = messageBusAdapter;
-    this._iamService = iamService;
+    this._identityService = identityService;
   }
 
   private get messageBusAdapter(): IMessageBusAdapter {
     return this._messageBusAdapter;
   }
 
-  private get iamService(): any {
-    return this._iamService;
+  private get identityService(): IIdentityService {
+    return this._identityService;
   }
 
   public initializeAppExtensions(app: any): void {
@@ -89,9 +94,10 @@ export class HttpExtension extends BaseHttpExtension {
           bearerToken = req.cookies.token;
       }
 
-      let context: any = null;
+      let context: ExecutionContext = null;
       try {
-          context = await this.iamService.resolveExecutionContext(bearerToken, TokenType.jwt);
+          const identity: IIdentity = await this.identityService.getIdentity(bearerToken);
+          context = new ExecutionContext(identity);
       } catch (err) {
         debugInfo('context can not be generated - token invalid');
 
