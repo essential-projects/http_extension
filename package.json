@@ -15,7 +15,6 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-    "@essential-projects/bootstrapper": "^2.0.0",
     "@essential-projects/foundation": "^1.0.0",
     "@essential-projects/http_node": "^2.0.0",
     "@essential-projects/iam_contracts": "^3.0.0",
