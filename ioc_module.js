@@ -6,7 +6,7 @@ const extensionDiscoveryTag = require('@essential-projects/core_contracts').Exte
 function registerInContainer(container) {
 
   container.register('HttpExtension', HttpExtension)
-    .dependencies('container', 'MessageBusAdapter')
+    .dependencies('container')
     .configure('http:http_extension')
     .tags(extensionDiscoveryTag)
     .singleton();

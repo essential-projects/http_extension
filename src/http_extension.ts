@@ -1,6 +1,4 @@
-import {runtime} from '@essential-projects/foundation';
 import {HttpExtension as BaseHttpExtension} from '@essential-projects/http_node';
-import {IMessageBusAdapter} from '@essential-projects/messagebus_contracts';
 
 import {Container, IInstanceWrapper} from 'addict-ioc';
 
@@ -14,20 +12,12 @@ import * as http from 'http';
 
 export class HttpExtension extends BaseHttpExtension {
 
-  private _messageBusAdapter: IMessageBusAdapter = undefined;
   private _httpServer: http.Server = undefined;
 
   public config: any = undefined;
 
-  constructor(container: Container<IInstanceWrapper<any>>,
-              messageBusAdapter: IMessageBusAdapter) {
+  constructor(container: Container<IInstanceWrapper<any>>) {
     super(container);
-
-    this._messageBusAdapter = messageBusAdapter;
-  }
-
-  private get messageBusAdapter(): IMessageBusAdapter {
-    return this._messageBusAdapter;
   }
 
   public initializeAppExtensions(app: any): void {
@@ -65,10 +55,9 @@ export class HttpExtension extends BaseHttpExtension {
 
   public start(): Promise<any> {
     return new Promise((resolve: Function, reject: Function): void => {
-      this.messageBusAdapter.start(this._httpServer);
       this._server = this._httpServer.listen(this.config.server.port, this.config.server.host, () => {
 
-        runtime.invokeAsPromiseIfPossible(this.onStarted, this)
+        this.invokeAsPromiseIfPossible(this.onStarted, this)
           .then((result: any) => {
             resolve(result);
           })
@@ -77,6 +66,30 @@ export class HttpExtension extends BaseHttpExtension {
           });
       });
 
+    });
+  }
+
+  // Taken from the foundation, to remove the need for that package.
+  private invokeAsPromiseIfPossible(functionToInvoke: any, invocationContext: any, invocationParameter?: Array<any>): Promise<any> {
+
+    return new Promise((resolve: any, reject: any): void => {
+
+      const isValidFunction: boolean = functionToInvoke !== undefined &&
+                                       functionToInvoke !== null &&
+                                       typeof functionToInvoke === 'function';
+
+      if (!isValidFunction) {
+        return resolve();
+      }
+
+      let result: any;
+      try {
+        result = functionToInvoke.call(invocationContext, invocationParameter);
+      } catch (error) {
+        return reject(error);
+      }
+
+      resolve(result);
     });
   }
 }
