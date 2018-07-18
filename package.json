@@ -15,6 +15,7 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
+    "@essential-projects/bootstrapper_contracts": "feature~remove_old_datastore_implementation",
     "@essential-projects/http_node": "^2.0.0",
     "@essential-projects/iam_contracts": "^3.0.0",
     "addict-ioc": "^2.3.7",
