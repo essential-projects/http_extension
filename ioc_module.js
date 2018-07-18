@@ -1,7 +1,7 @@
 'use strict';
 
 const HttpExtension = require('./dist/commonjs/index').HttpExtension;
-const extensionDiscoveryTag = require('@essential-projects/bootstrapper_contracts').ExtensionDiscoveryTag;
+const extensionDiscoveryTag = require('@essential-projects/bootstrapper_contracts').extensionDiscoveryTag;
 
 function registerInContainer(container) {
 
