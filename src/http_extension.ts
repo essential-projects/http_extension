@@ -1,6 +1,6 @@
 import {HttpExtension as BaseHttpExtension} from '@essential-projects/http_node';
 
-import {Container, IInstanceWrapper} from 'addict-ioc';
+import {IContainer, IInstanceWrapper} from 'addict-ioc';
 
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
@@ -16,7 +16,7 @@ export class HttpExtension extends BaseHttpExtension {
 
   public config: any = undefined;
 
-  constructor(container: Container<IInstanceWrapper<any>>) {
+  constructor(container: IContainer<IInstanceWrapper<any>>) {
     super(container);
   }
 
