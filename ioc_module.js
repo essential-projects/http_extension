@@ -1,12 +1,12 @@
 'use strict';
 
 const HttpExtension = require('./dist/commonjs/index').HttpExtension;
-const extensionDiscoveryTag = require('@essential-projects/core_contracts').ExtensionDiscoveryTag;
+const extensionDiscoveryTag = require('@essential-projects/bootstrapper_contracts').extensionDiscoveryTag;
 
 function registerInContainer(container) {
 
   container.register('HttpExtension', HttpExtension)
-    .dependencies('container', 'MessageBusAdapter')
+    .dependencies('container')
     .configure('http:http_extension')
     .tags(extensionDiscoveryTag)
     .singleton();

@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "extension for discovering and mounting components to an HTTP endpoint",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -15,10 +15,9 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-    "@essential-projects/foundation": "^1.0.0",
-    "@essential-projects/http_node": "^2.0.0",
+    "@essential-projects/bootstrapper_contracts": "^1.0.0",
+    "@essential-projects/http_node": "^3.0.0",
     "@essential-projects/iam_contracts": "^3.0.0",
-    "@essential-projects/messagebus_contracts": "^2.0.0",
     "addict-ioc": "^2.3.7",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
