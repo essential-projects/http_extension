@@ -15,8 +15,8 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-    "@essential-projects/bootstrapper_contracts": "^1.0.0",
-    "@essential-projects/http_node": "^3.0.0",
+    "@essential-projects/bootstrapper_contracts": "feature~async_notifications",
+    "@essential-projects/http_node": "feature~async_notifications",
     "@essential-projects/iam_contracts": "^3.0.0",
     "addict-ioc": "^2.3.7",
     "body-parser": "^1.15.2",
