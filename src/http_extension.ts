@@ -8,11 +8,8 @@ import * as busboy from 'connect-busboy';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as helmet from 'helmet';
-import * as http from 'http';
 
 export class HttpExtension extends BaseHttpExtension {
-
-  private _httpServer: http.Server = undefined;
 
   public config: any = undefined;
 
