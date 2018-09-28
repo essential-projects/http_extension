@@ -8,20 +8,13 @@ import * as busboy from 'connect-busboy';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as helmet from 'helmet';
-import * as http from 'http';
 
 export class HttpExtension extends BaseHttpExtension {
-
-  private _httpServer: http.Server = undefined;
 
   public config: any = undefined;
 
   constructor(container: IContainer<IInstanceWrapper<any>>) {
     super(container);
-  }
-
-  public initializeAppExtensions(app: any): void {
-    this._httpServer = http.createServer(app);
   }
 
   public initializeMiddlewareBeforeRouters(app: any): void {
@@ -53,20 +46,4 @@ export class HttpExtension extends BaseHttpExtension {
     }
   }
 
-  public start(): Promise<any> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      this._server = this._httpServer.listen(this.config.server.port, this.config.server.host, () => {
-
-        // Taken from the foundation project to remove the need for that package. Located in the base extension.
-        this.invokeAsPromiseIfPossible(this.onStarted, this)
-          .then((result: any) => {
-            resolve(result);
-          })
-          .catch((error: Error) => {
-            reject(error);
-          });
-      });
-
-    });
-  }
 }
