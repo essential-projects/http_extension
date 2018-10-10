@@ -4,7 +4,7 @@
     "registry": "https://www.npmjs.com"
   },
   "version": "5.0.0",
-  "description": "extension for discovering and mounting components to an HTTP endpoint",
+  "description": "Extension for discovering and mounting components to an HTTP- or Socket.io- endpoint.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
@@ -25,7 +25,11 @@
     "connect-busboy": "0.0.2",
     "cookie-parser": "1.4.3",
     "cors": "2.8.3",
-    "helmet": "3.4.0"
+    "express": "4.16.3",
+    "helmet": "3.4.0",
+    "loggerhythm": "3.0.3",
+    "morgan": "1.9.1",
+    "socket.io": "2.1.1"
   },
   "devDependencies": {
     "@essential-projects/tslint-config": "1.1.2",
@@ -47,8 +51,6 @@
   "scripts": {
     "build": "gulp build",
     "prepare": "npm run build",
-    "build-doc": "gulp doc",
-    "build-schemas": "gulp typescript-schema",
     "lint": "gulp lint",
     "test": "gulp test"
   }
