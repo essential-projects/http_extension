@@ -7,7 +7,7 @@ const logger: Logger = Logger
                         .createChildLogger('error_handler');
 
 export function errorHandler(error: Error | EssentialProjectsError, request: Request, response: Response, next: NextFunction): void {
-  let statusCode: number = ErrorCodes.InternalServerError;
+
   let responseMessage: string = '';
 
   if (error instanceof Error) {
@@ -16,9 +16,9 @@ export function errorHandler(error: Error | EssentialProjectsError, request: Req
     logger.warn('Caught something that is not an instanceof Error:', error);
   }
 
-  if (isEssentialProjectsError(error)) {
-    statusCode = error.code;
-  }
+  const statusCode: number = isEssentialProjectsError(error)
+    ? error.code
+    : ErrorCodes.InternalServerError;
 
   response
     .status(statusCode)

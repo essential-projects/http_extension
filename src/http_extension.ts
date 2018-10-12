@@ -112,8 +112,8 @@ export class HttpExtension implements IHttpExtension {
 
   protected async initializeRouter(routerName: string): Promise<void> {
 
-    if (!this.container.isRegistered(routerName)) {
-
+    const routerIsNotRegistered: boolean = !this.container.isRegistered(routerName);
+    if (routerIsNotRegistered) {
       throw new Error(`There is no router registered for key '${routerName}'`);
     }
 
@@ -134,7 +134,8 @@ export class HttpExtension implements IHttpExtension {
 
   protected async initializeSocketEndpoint(socketEndpointName: string): Promise<void> {
 
-    if (!this.container.isRegistered(socketEndpointName)) {
+    const socketEndpointIsNotRegistered: boolean = !this.container.isRegistered(socketEndpointName);
+    if (socketEndpointIsNotRegistered) {
       throw new Error(`There is no socket endpoint registered for key '${socketEndpointName}'`);
     }
 
@@ -234,11 +235,11 @@ export class HttpExtension implements IHttpExtension {
 
   protected initializeBaseMiddleware(app: Express.Application): void {
 
-    const opts: any = {};
+    const options: {[optionName: string]: any} = {};
     if (this.config && this.config.parseLimit) {
-      opts.limit = this.config.parseLimit;
+      options.limit = this.config.parseLimit;
     }
-    app.use(bodyParser.json(opts));
+    app.use(bodyParser.json(options));
   }
 
   // Taken from the foundation, to remove the need for that package.
