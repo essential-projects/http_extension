@@ -72,7 +72,24 @@ export class HttpExtension implements IHttpExtension {
 
   protected initializeServer(): void {
     this._httpServer = (http as any).Server(this.app);
-    this._socketServer = socketIo(this.httpServer);
+
+    const socketIoHeaders: any = {
+      'Access-Control-Allow-Headers': this.config.cors.options.allowedHeaders
+        ? this.config.cors.options.allowedHeaders.join(',')
+        : 'Content-Type, Authorization',
+      'Access-Control-Allow-Origin': this.config.cors.options.origin || '*',
+      'Access-Control-Allow-Credentials': this.config.cors.options.credentials || true,
+    };
+
+    // TODO: The socket.io typings are currently very much outdated and do not contain the "handlePreflightRequest" option.
+    // It is still functional, though.
+    this._socketServer = socketIo(this.httpServer as any, <any> {
+      handlePreflightRequest: (req: any, res: any): void => {
+        // tslint:disable-next-line:no-magic-numbers
+        res.writeHead(200, socketIoHeaders);
+        res.end();
+      },
+    });
   }
 
   protected async initializeSocketEndpoints(): Promise<void> {
@@ -206,8 +223,8 @@ export class HttpExtension implements IHttpExtension {
     app.use(bodyParser.urlencoded(urlEncodedOpts));
     app.use(cookieParser());
 
-    if (!this.config.disableCors) {
-      app.use(cors());
+    if (this.config.cors.enabled) {
+      app.use(cors(this.config.cors.options));
     }
 
     // securing http headers with helmet
