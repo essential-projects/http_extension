@@ -206,8 +206,8 @@ export class HttpExtension implements IHttpExtension {
     app.use(bodyParser.urlencoded(urlEncodedOpts));
     app.use(cookieParser());
 
-    if (!this.config.disableCors) {
-      app.use(cors());
+    if (this.config.cors.enabled) {
+      app.use(cors(this.config.cors.options));
     }
 
     // securing http headers with helmet
