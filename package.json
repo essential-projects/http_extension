@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Extension for discovering and mounting components to an HTTP- or Socket.io- endpoint.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
