@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "6.2.0",
+  "version": "6.2.1",
   "description": "Extension for discovering and mounting components to an HTTP- or Socket.io- endpoint.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -17,6 +17,7 @@
     "@essential-projects/errors_ts": "~1.4.0",
     "@essential-projects/http_contracts": "~2.3.0",
     "@essential-projects/iam_contracts": "~3.2.0",
+    "addict-ioc": "~2.5.1",
     "body-parser": "1.18.3",
     "compression": "1.7.3",
     "connect-busboy": "0.0.2",
@@ -37,7 +38,7 @@
     "@types/express": "4.16.0",
     "@types/helmet": "0.0.42",
     "@types/node": "10.12.2",
-    "@types/socket.io": "1.4.38",
+    "@types/socket.io": "2.1.0",
     "@types/socket.io-client": "1.4.32",
     "gulp": "4.0.0",
     "gulptraum": "3.0.0",
@@ -45,9 +46,6 @@
     "tsconfig": "7.0.0",
     "tslint": "5.11.0",
     "typescript": "3.1.6"
-  },
-  "peerDependencies": {
-    "addict-ioc": "~2.5.0"
   },
   "scripts": {
     "build": "gulp build",
