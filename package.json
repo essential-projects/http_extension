@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "6.2.1",
+  "version": "6.2.2",
   "description": "Extension for discovering and mounting components to an HTTP- or Socket.io- endpoint.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -40,8 +40,8 @@
     "@types/node": "10.12.2",
     "@types/socket.io": "2.1.0",
     "@types/socket.io-client": "1.4.32",
-    "gulp": "4.0.0",
-    "gulptraum": "3.0.0",
+    "gulp": "~4.0.0",
+    "gulptraum": "~3.0.0",
     "gulptraum-typescript": "2.0.0",
     "tsconfig": "7.0.0",
     "tslint": "5.11.0",
