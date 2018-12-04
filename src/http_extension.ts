@@ -231,7 +231,9 @@ export class HttpExtension implements IHttpExtension {
         app.use(helmet.hidePoweredBy());
         // app.use(helmet.ieNoOpen());
         app.use(helmet.noSniff());
-        app.use(helmet.frameguard());
+
+        const frameguardOptions = this.config.frameguard || {};
+        app.use(helmet.frameguard(frameguardOptions));
         // https://github.com/helmetjs/x-xss-protection
         app.use(helmet.xssFilter());
 
