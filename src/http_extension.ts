@@ -209,7 +209,7 @@ export class HttpExtension implements IHttpExtension {
     });
   }
 
-  protected initializeAppExtensions(app: Express.Application): Promise<any> | any { return; }
+  protected initializeAppExtensions(app: Express.Application): Promise<any> | any {return; }
 
   protected initializeMiddlewareBeforeRouters(app: Express.Application): Promise<any> | any {
     app.use(busboy());
@@ -231,7 +231,9 @@ export class HttpExtension implements IHttpExtension {
     app.use(helmet.hidePoweredBy());
     // app.use(helmet.ieNoOpen());
     app.use(helmet.noSniff());
-    app.use(helmet.frameguard());
+
+    const frameguardOptions = this.config.frameguard || {};
+    app.use(helmet.frameguard(frameguardOptions));
     // https://github.com/helmetjs/x-xss-protection
     app.use(helmet.xssFilter());
 
@@ -248,7 +250,7 @@ export class HttpExtension implements IHttpExtension {
     return routerNames;
   }
 
-  protected onStarted(): Promise<any> | any { return; }
+  protected onStarted(): Promise<any> | any {return; }
 
   protected initializeBaseMiddleware(app: Express.Application): void {
 
@@ -256,6 +258,10 @@ export class HttpExtension implements IHttpExtension {
     if (this.config && this.config.parseLimit) {
       options.limit = this.config.parseLimit;
     }
+
+    options.verify = (req, res, buf) => {
+      req.rawBody = buf.toString();
+    };
     app.use(bodyParser.json(options));
   }
 
