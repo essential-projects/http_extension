@@ -239,7 +239,7 @@ export class HttpExtension implements IHttpExtension {
     // app.use(helmet.ieNoOpen());
     app.use(helmet.noSniff());
 
-    const frameguardOptions = this.config.frameguard || {};
+    const frameguardOptions: any = this.config.frameguard || {};
     app.use(helmet.frameguard(frameguardOptions));
     // https://github.com/helmetjs/x-xss-protection
     app.use(helmet.xssFilter());
@@ -266,7 +266,7 @@ export class HttpExtension implements IHttpExtension {
       options.limit = this.config.parseLimit;
     }
 
-    options.verify = (req, res, buf) => {
+    options.verify = (req: Request | any, res: Response, buf: any): void => {
       req.rawBody = buf.toString();
     };
     app.use(bodyParser.json(options));
