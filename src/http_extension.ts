@@ -15,11 +15,13 @@ import {defaultSocketNamespace, IHttpExtension, IHttpRouter, IHttpSocketEndpoint
 
 import {errorHandler} from './error_handler';
 
+type SocketEndpointCollection = {[socketName: string]: IHttpSocketEndpoint};
+
 export class HttpExtension implements IHttpExtension {
 
   private _container: IContainer<IInstanceWrapper<any>> = undefined;
   private _routers: any = {};
-  private _socketEndpoints: any = {};
+  private _socketEndpoints: SocketEndpointCollection = {};
   private _app: Express.Application = undefined;
   protected _httpServer: http.Server = undefined;
   protected _socketServer: SocketIO.Server = undefined;
@@ -34,7 +36,7 @@ export class HttpExtension implements IHttpExtension {
     return this._routers;
   }
 
-  public get socketEndpoints(): any {
+  public get socketEndpoints(): SocketEndpointCollection {
     return this._socketEndpoints;
   }
 
@@ -189,6 +191,11 @@ export class HttpExtension implements IHttpExtension {
     for (const routerName in this.routers) {
       const router: IHttpRouter = this.routers[routerName];
       await this.invokeAsPromiseIfPossible(router.dispose, router);
+    }
+
+    for (const socketName in this.socketEndpoints) {
+      const socketEndpoint: IHttpSocketEndpoint = this.socketEndpoints[socketName];
+      await this.invokeAsPromiseIfPossible(socketEndpoint.dispose, socketEndpoint);
     }
 
     await new Promise(async(resolve: Function, reject: Function): Promise<void> => {
