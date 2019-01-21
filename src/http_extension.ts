@@ -187,25 +187,30 @@ export class HttpExtension implements IHttpExtension {
   }
 
   public async close(): Promise<void> {
+    await this._closeSockets();
+    await this._closeHttpEndpoints();
+  }
 
-    for (const routerName in this.routers) {
-      const router: IHttpRouter = this.routers[routerName];
-      await this.invokeAsPromiseIfPossible(router.dispose, router);
+  private async _closeSockets(): Promise<void> {
+    const connectedSockets: Array<socketIo.Socket> = Object.values(this.socketServer.of('/').connected);
+    for (const socket of connectedSockets) {
+      socket.disconnect(true);
     }
 
     for (const socketName in this.socketEndpoints) {
       const socketEndpoint: IHttpSocketEndpoint = this.socketEndpoints[socketName];
       await this.invokeAsPromiseIfPossible(socketEndpoint.dispose, socketEndpoint);
     }
+  }
+
+  private async _closeHttpEndpoints(): Promise<void> {
+
+    for (const routerName in this.routers) {
+      const router: IHttpRouter = this.routers[routerName];
+      await this.invokeAsPromiseIfPossible(router.dispose, router);
+    }
 
     await new Promise(async(resolve: Function, reject: Function): Promise<void> => {
-
-      const connectedSockets: Array<socketIo.Socket> = Object.values(this.socketServer.of('/').connected);
-
-      connectedSockets.forEach((socket: socketIo.Socket): void => {
-        socket.disconnect(true);
-      });
-
       if (this.httpServer) {
         this._socketServer.close(() => {
           this.httpServer.close(() => {
