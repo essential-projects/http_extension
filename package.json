@@ -16,7 +16,6 @@
     "@essential-projects/bootstrapper_contracts": "~1.3.0",
     "@essential-projects/errors_ts": "~1.4.0",
     "@essential-projects/http_contracts": "~2.3.0",
-    "@essential-projects/iam_contracts": "~3.4.0",
     "addict-ioc": "~2.5.1",
     "body-parser": "~1.18.3",
     "compression": "~1.7.3",
