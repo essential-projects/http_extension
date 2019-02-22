@@ -20,6 +20,8 @@ export function errorHandler(error: Error | EssentialProjectsError, request: Req
     ? error.code
     : ErrorCodes.InternalServerError;
 
+  logger.info(statusCode, error);
+
   response
     .status(statusCode)
     .send(responseMessage);
