@@ -1,4 +1,4 @@
-import {IContainer, IInstanceWrapper} from 'addict-ioc';
+import { IContainer, IInstanceWrapper } from 'addict-ioc';
 
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
@@ -8,18 +8,20 @@ import * as cors from 'cors';
 import * as Express from 'express';
 import * as helmet from 'helmet';
 import * as http from 'http';
-import * as socketIo from 'socket.io';
 
 import {routerDiscoveryTag, socketEndpointDiscoveryTag} from '@essential-projects/bootstrapper_contracts';
 import {defaultSocketNamespace, IHttpExtension, IHttpRouter, IHttpSocketEndpoint} from '@essential-projects/http_contracts';
+import {IHttpSocketAdapter} from '@essential-projects/http_socket_adapter_contracts';
+import {IEndpointSocketScope} from '@essential-projects/websocket_contracts';
 
 import {errorHandler} from './error_handler';
 
-type SocketEndpointCollection = {[socketName: string]: IHttpSocketEndpoint};
+type SocketEndpointCollection = { [socketName: string]: IHttpSocketEndpoint };
 
 export class HttpExtension implements IHttpExtension {
 
   private _container: IContainer<IInstanceWrapper<any>> = undefined;
+  private _httpSocketAdapter: IHttpSocketAdapter = undefined;
   private _routers: any = {};
   private _socketEndpoints: SocketEndpointCollection = {};
   private _app: Express.Application = undefined;
@@ -28,8 +30,9 @@ export class HttpExtension implements IHttpExtension {
 
   public config: any = undefined;
 
-  constructor(container: IContainer<IInstanceWrapper<any>>) {
+  constructor(container: IContainer<IInstanceWrapper<any>>, httpSocketAdapter: IHttpSocketAdapter) {
     this._container = container;
+    this._httpSocketAdapter = httpSocketAdapter;
   }
 
   public get routers(): any {
@@ -42,6 +45,10 @@ export class HttpExtension implements IHttpExtension {
 
   public get container(): IContainer<IInstanceWrapper<any>> {
     return this._container;
+  }
+
+  public get httpSocketAdapter(): IHttpSocketAdapter {
+    return this._httpSocketAdapter;
   }
 
   public get app(): Express.Application {
@@ -62,6 +69,7 @@ export class HttpExtension implements IHttpExtension {
 
   public async initialize(): Promise<void> {
     await this.initializeServer();
+    await this.initializeSocketAdapter();
 
     await this.invokeAsPromiseIfPossible(this.initializeAppExtensions, this, this.app as any);
     this.initializeBaseMiddleware(this.app);
@@ -72,26 +80,12 @@ export class HttpExtension implements IHttpExtension {
     await this.initializeSocketEndpoints();
   }
 
+  protected async initializeSocketAdapter(): Promise<void> {
+      await this.httpSocketAdapter.initializeAdapter(this.httpServer);
+  }
+
   protected initializeServer(): void {
     this._httpServer = (http as any).Server(this.app);
-
-    const socketIoHeaders: any = {
-      'Access-Control-Allow-Headers': this.config.cors.options.allowedHeaders
-        ? this.config.cors.options.allowedHeaders.join(',')
-        : 'Content-Type, Authorization',
-      'Access-Control-Allow-Origin': this.config.cors.options.origin || '*',
-      'Access-Control-Allow-Credentials': this.config.cors.options.credentials || true,
-    };
-
-    // TODO: The socket.io typings are currently very much outdated and do not contain the "handlePreflightRequest" option.
-    // It is still functional, though.
-    this._socketServer = socketIo(this.httpServer as any, <any> {
-      handlePreflightRequest: (req: any, res: any): void => {
-        // tslint:disable-next-line:no-magic-numbers
-        res.writeHead(200, socketIoHeaders);
-        res.end();
-      },
-    });
   }
 
   protected async initializeSocketEndpoints(): Promise<void> {
@@ -161,9 +155,11 @@ export class HttpExtension implements IHttpExtension {
     const socketEndpointInstance: IHttpSocketEndpoint = await this.container.resolveAsync<IHttpSocketEndpoint>(socketEndpointName);
 
     const socketEndpointHasNamespace: boolean = !!socketEndpointInstance.namespace && socketEndpointInstance.namespace !== '';
-    const namespace: SocketIO.Namespace = socketEndpointHasNamespace
-      ? this._socketServer.of(socketEndpointInstance.namespace)
-      : this._socketServer.of(defaultSocketNamespace);
+    const namespaceIdentifier: string = socketEndpointHasNamespace
+      ? socketEndpointInstance.namespace
+      : defaultSocketNamespace;
+
+    const namespace: IEndpointSocketScope = this.httpSocketAdapter.getNamespace(namespaceIdentifier);
 
     await socketEndpointInstance.initializeEndpoint(namespace);
 
@@ -187,15 +183,15 @@ export class HttpExtension implements IHttpExtension {
   }
 
   public async close(): Promise<void> {
-    await this._closeSockets();
+    await this._closeSocketEndpoints();
     await this._closeHttpEndpoints();
+    await this._closeHttpServer();
   }
 
-  private async _closeSockets(): Promise<void> {
-    const connectedSockets: Array<socketIo.Socket> = Object.values(this.socketServer.of('/').connected);
-    for (const socket of connectedSockets) {
-      socket.disconnect(true);
-    }
+  private async _closeSocketEndpoints(): Promise<void> {
+
+    // Closes active connections
+    await this.httpSocketAdapter.dispose();
 
     for (const socketName in this.socketEndpoints) {
       const socketEndpoint: IHttpSocketEndpoint = this.socketEndpoints[socketName];
@@ -209,19 +205,20 @@ export class HttpExtension implements IHttpExtension {
       const router: IHttpRouter = this.routers[routerName];
       await this.invokeAsPromiseIfPossible(router.dispose, router);
     }
+  }
+
+  private async _closeHttpServer(): Promise<void> {
 
     await new Promise(async(resolve: Function, reject: Function): Promise<void> => {
       if (this.httpServer) {
-        this._socketServer.close(() => {
-          this.httpServer.close(() => {
-            resolve();
-          });
+        this.httpServer.close(() => {
+        resolve();
         });
       }
     });
   }
 
-  protected initializeAppExtensions(app: Express.Application): Promise<any> | any {return; }
+  protected initializeAppExtensions(app: Express.Application): Promise<any> | any { return; }
 
   protected initializeMiddlewareBeforeRouters(app: Express.Application): Promise<any> | any {
     app.use(busboy());
@@ -262,11 +259,11 @@ export class HttpExtension implements IHttpExtension {
     return routerNames;
   }
 
-  protected onStarted(): Promise<any> | any {return; }
+  protected onStarted(): Promise<any> | any { return; }
 
   protected initializeBaseMiddleware(app: Express.Application): void {
 
-    const options: {[optionName: string]: any} = {};
+    const options: { [optionName: string]: any } = {};
     if (this.config && this.config.parseLimit) {
       options.limit = this.config.parseLimit;
     }
