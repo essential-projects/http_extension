@@ -6,7 +6,7 @@ const extensionDiscoveryTag = require('@essential-projects/bootstrapper_contract
 function registerInContainer(container) {
 
   container.register('HttpExtension', HttpExtension)
-    .dependencies('container')
+    .dependencies('container', 'MultiHttpSocketAdapter')
     .configure('http:http_extension')
     .tags(extensionDiscoveryTag)
     .singleton();
