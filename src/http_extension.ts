@@ -26,7 +26,6 @@ export class HttpExtension implements IHttpExtension {
   private _socketEndpoints: SocketEndpointCollection = {};
   private _app: Express.Application = undefined;
   protected _httpServer: http.Server = undefined;
-  protected _socketServer: SocketIO.Server = undefined;
 
   public config: any = undefined;
 
@@ -61,10 +60,6 @@ export class HttpExtension implements IHttpExtension {
 
   public get httpServer(): http.Server {
     return this._httpServer;
-  }
-
-  public get socketServer(): SocketIO.Server {
-    return this._socketServer;
   }
 
   public async initialize(): Promise<void> {
