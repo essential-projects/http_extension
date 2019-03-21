@@ -213,7 +213,9 @@ export class HttpExtension implements IHttpExtension {
     });
   }
 
-  protected initializeAppExtensions(app: Express.Application): Promise<any> | any { return; }
+  protected initializeAppExtensions(app: Express.Application): Promise<any> | any {
+    return;
+  }
 
   protected initializeMiddlewareBeforeRouters(app: Express.Application): Promise<any> | any {
     app.use(busboy());
