@@ -260,7 +260,7 @@ export class HttpExtension implements IHttpExtension {
 
   protected initializeBaseMiddleware(app: Express.Application): void {
 
-    const options: { [optionName: string]: any } = {};
+    const options: {[optionName: string]: any} = {};
     if (this.config && this.config.parseLimit) {
       options.limit = this.config.parseLimit;
     }
