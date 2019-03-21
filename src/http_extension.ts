@@ -1,4 +1,4 @@
-import { IContainer, IInstanceWrapper } from 'addict-ioc';
+import {IContainer, IInstanceWrapper} from 'addict-ioc';
 
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
@@ -16,7 +16,7 @@ import {IEndpointSocketScope} from '@essential-projects/websocket_contracts';
 
 import {errorHandler} from './error_handler';
 
-type SocketEndpointCollection = { [socketName: string]: IHttpSocketEndpoint };
+type SocketEndpointCollection = {[socketName: string]: IHttpSocketEndpoint};
 
 export class HttpExtension implements IHttpExtension {
 
@@ -207,7 +207,7 @@ export class HttpExtension implements IHttpExtension {
     await new Promise(async(resolve: Function, reject: Function): Promise<void> => {
       if (this.httpServer) {
         this.httpServer.close(() => {
-        resolve();
+          resolve();
         });
       }
     });
@@ -254,7 +254,9 @@ export class HttpExtension implements IHttpExtension {
     return routerNames;
   }
 
-  protected onStarted(): Promise<any> | any { return; }
+  protected onStarted(): Promise<any> | any {
+    return;
+  }
 
   protected initializeBaseMiddleware(app: Express.Application): void {
 
