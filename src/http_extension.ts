@@ -1,3 +1,4 @@
+/* eslint-disable no-return-await */
 import {IContainer, IInstanceWrapper} from 'addict-ioc';
 
 import * as bodyParser from 'body-parser';
@@ -288,7 +289,7 @@ export class HttpExtension implements IHttpExtension {
       return Promise.resolve();
     }
 
-    return functionToInvoke.call(invocationContext, invocationParameter);
+    return await functionToInvoke.call(invocationContext, invocationParameter);
   }
 
 }
