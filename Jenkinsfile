@@ -40,16 +40,13 @@ pipeline {
     stage('lint') {
       steps {
         sh('node --version')
-        /* we do not want the linting to cause a failed build */
-        sh('npm run lint || true')
+        sh('npm run lint')
       }
     }
     stage('build') {
       steps {
         sh('node --version')
         sh('npm run build')
-        // sh('npm run build-schemas')
-        // sh('npm run build-doc')
       }
     }
     stage('test') {
