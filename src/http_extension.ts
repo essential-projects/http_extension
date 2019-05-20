@@ -1,3 +1,4 @@
+/* eslint-disable no-return-await */
 import {IContainer, IInstanceWrapper} from 'addict-ioc';
 
 import * as bodyParser from 'body-parser';
@@ -5,13 +6,15 @@ import * as compression from 'compression';
 import * as busboy from 'connect-busboy';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
-import * as Express from 'express';
+import * as express from 'express';
 import * as helmet from 'helmet';
 import * as http from 'http';
 import * as socketIo from 'socket.io';
 
 import {routerDiscoveryTag, socketEndpointDiscoveryTag} from '@essential-projects/bootstrapper_contracts';
-import {defaultSocketNamespace, IHttpExtension, IHttpRouter, IHttpSocketEndpoint} from '@essential-projects/http_contracts';
+import {
+  IHttpExtension, IHttpRouter, IHttpSocketEndpoint, defaultSocketNamespace,
+} from '@essential-projects/http_contracts';
 
 import {errorHandler} from './error_handler';
 
@@ -19,19 +22,22 @@ type SocketEndpointCollection = {[socketName: string]: IHttpSocketEndpoint};
 
 export class HttpExtension implements IHttpExtension {
 
-  private _container: IContainer<IInstanceWrapper<any>> = undefined;
-  private _routers: any = {};
-  private _socketEndpoints: SocketEndpointCollection = {};
-  private _app: Express.Application = undefined;
+  public config: any = undefined;
+
   protected _httpServer: http.Server = undefined;
   protected _socketServer: SocketIO.Server = undefined;
 
-  public config: any = undefined;
+  private _container: IContainer<IInstanceWrapper<any>> = undefined;
+  private _routers: any = {};
+  private _socketEndpoints: SocketEndpointCollection = {};
+  private _app: express.Application = undefined;
 
   constructor(container: IContainer<IInstanceWrapper<any>>) {
     this._container = container;
   }
 
+  // --------------
+  // TODO: Check if it is really necessary to expose all this stuff publicy.
   public get routers(): any {
     return this._routers;
   }
@@ -44,13 +50,14 @@ export class HttpExtension implements IHttpExtension {
     return this._container;
   }
 
-  public get app(): Express.Application {
+  public get app(): express.Application {
     if (!this._app) {
-      this._app = Express();
+      this._app = express();
     }
 
     return this._app;
   }
+  // ------------------
 
   public get httpServer(): http.Server {
     return this._httpServer;
@@ -73,6 +80,8 @@ export class HttpExtension implements IHttpExtension {
   }
 
   protected initializeServer(): void {
+    // This notation comes from an external module, which we have no control over.
+    // eslint-disable-next-line
     this._httpServer = (http as any).Server(this.app);
 
     // TODO: The socket.io typings are currently very much outdated and do not contain the "handlePreflightRequest" option.
@@ -87,7 +96,7 @@ export class HttpExtension implements IHttpExtension {
 
   protected async initializeSocketEndpoints(): Promise<void> {
 
-    const allSocketEndpointNames: Array<string> = this.container.getKeysByTags(socketEndpointDiscoveryTag);
+    const allSocketEndpointNames = this.container.getKeysByTags(socketEndpointDiscoveryTag);
 
     for (const socketEndpointName of allSocketEndpointNames) {
       await this.initializeSocketEndpoint(socketEndpointName);
@@ -98,14 +107,15 @@ export class HttpExtension implements IHttpExtension {
 
     let routerNames: Array<string>;
 
-    const allRouterNames: Array<string> = this.container.getKeysByTags(routerDiscoveryTag);
+    const allRouterNames = this.container.getKeysByTags(routerDiscoveryTag);
 
     this.container.validateDependencies();
 
-    const filteredRouterNames: Array<string> = await this.invokeAsPromiseIfPossible(this.filterRouters, this, allRouterNames);
+    // TODO: Check if this filtering is used anywhere and remove if it is not.
+    const filteredRouterNames = await this.invokeAsPromiseIfPossible(this.filterRouters, this, allRouterNames);
 
-    if (typeof filteredRouterNames === 'undefined' || filteredRouterNames === null) {
-      routerNames = allRouterNames;
+    if (!filteredRouterNames) {
+      routerNames = [];
     } else {
 
       if (!Array.isArray(filteredRouterNames)) {
@@ -122,12 +132,12 @@ export class HttpExtension implements IHttpExtension {
 
   protected async initializeRouter(routerName: string): Promise<void> {
 
-    const routerIsNotRegistered: boolean = !this.container.isRegistered(routerName);
+    const routerIsNotRegistered = !this.container.isRegistered(routerName);
     if (routerIsNotRegistered) {
       throw new Error(`There is no router registered for key '${routerName}'`);
     }
 
-    const routerInstance: IHttpRouter = await this.container.resolveAsync<IHttpRouter>(routerName);
+    const routerInstance = await this.container.resolveAsync<IHttpRouter>(routerName);
 
     this.bindRoute(routerInstance);
     this.routers[routerName] = routerInstance;
@@ -135,24 +145,26 @@ export class HttpExtension implements IHttpExtension {
 
   protected bindRoute(routerInstance: any): void {
 
-    const shieldingRouter: Express.Router = Express.Router();
+    // This notation comes from an external module, which we have no control over.
+    // eslint-disable-next-line
+    const shieldingRouter = express.Router();
 
     shieldingRouter.use(`/${routerInstance.baseRoute}/`, routerInstance.router);
 
-    this.app.use('/', shieldingRouter); // TODO (sm): this still needs a manual integration test
+    this.app.use('/', shieldingRouter);
   }
 
   protected async initializeSocketEndpoint(socketEndpointName: string): Promise<void> {
 
-    const socketEndpointIsNotRegistered: boolean = !this.container.isRegistered(socketEndpointName);
+    const socketEndpointIsNotRegistered = !this.container.isRegistered(socketEndpointName);
     if (socketEndpointIsNotRegistered) {
       throw new Error(`There is no socket endpoint registered for key '${socketEndpointName}'`);
     }
 
-    const socketEndpointInstance: IHttpSocketEndpoint = await this.container.resolveAsync<IHttpSocketEndpoint>(socketEndpointName);
+    const socketEndpointInstance = await this.container.resolveAsync<IHttpSocketEndpoint>(socketEndpointName);
 
-    const socketEndpointHasNamespace: boolean = !!socketEndpointInstance.namespace && socketEndpointInstance.namespace !== '';
-    const namespace: SocketIO.Namespace = socketEndpointHasNamespace
+    const socketEndpointHasNamespace = !!socketEndpointInstance.namespace && socketEndpointInstance.namespace !== '';
+    const namespace = socketEndpointHasNamespace
       ? this._socketServer.of(socketEndpointInstance.namespace)
       : this._socketServer.of(defaultSocketNamespace);
 
@@ -162,12 +174,12 @@ export class HttpExtension implements IHttpExtension {
   }
 
   public async start(): Promise<any> {
-    return new Promise(async(resolve: Function, reject: Function): Promise<any> => {
+    return new Promise(async (resolve: Function, reject: Function): Promise<any> => {
 
-      this._httpServer = this.httpServer.listen(this.config.server.port, this.config.server.host, async() => {
+      this._httpServer = this.httpServer.listen(this.config.server.port, this.config.server.host, async (): Promise<void> => {
 
         try {
-          const onStartedResult: any = await this.invokeAsPromiseIfPossible(this.onStarted, this);
+          const onStartedResult = await this.invokeAsPromiseIfPossible(this.onStarted, this);
           resolve(onStartedResult);
         } catch (error) {
           reject(error);
@@ -178,11 +190,11 @@ export class HttpExtension implements IHttpExtension {
   }
 
   public async close(): Promise<void> {
-    await this._closeSockets();
-    await this._closeHttpEndpoints();
+    await this.closeSockets();
+    await this.closeHttpEndpoints();
   }
 
-  private async _closeSockets(): Promise<void> {
+  private async closeSockets(): Promise<void> {
     const connectedSockets: Array<socketIo.Socket> = Object.values(this.socketServer.of('/').connected);
     for (const socket of connectedSockets) {
       socket.disconnect(true);
@@ -194,17 +206,17 @@ export class HttpExtension implements IHttpExtension {
     }
   }
 
-  private async _closeHttpEndpoints(): Promise<void> {
+  private async closeHttpEndpoints(): Promise<void> {
 
     for (const routerName in this.routers) {
-      const router: IHttpRouter = this.routers[routerName];
+      const router = this.routers[routerName];
       await this.invokeAsPromiseIfPossible(router.dispose, router);
     }
 
-    await new Promise(async(resolve: Function, reject: Function): Promise<void> => {
+    await new Promise(async (resolve: Function, reject: Function): Promise<void> => {
       if (this.httpServer) {
-        this._socketServer.close(() => {
-          this.httpServer.close(() => {
+        this._socketServer.close((): void => {
+          this.httpServer.close((): void => {
             resolve();
           });
         });
@@ -212,9 +224,9 @@ export class HttpExtension implements IHttpExtension {
     });
   }
 
-  protected initializeAppExtensions(app: Express.Application): Promise<any> | any {return; }
+  protected initializeAppExtensions(app: express.Application): Promise<any> | any { }
 
-  protected initializeMiddlewareBeforeRouters(app: Express.Application): Promise<any> | any {
+  protected initializeMiddlewareBeforeRouters(app: express.Application): Promise<any> | any {
     app.use(busboy());
     app.use(compression());
     const urlEncodedOpts: any = {
@@ -245,7 +257,7 @@ export class HttpExtension implements IHttpExtension {
     }
   }
 
-  protected initializeMiddlewareAfterRouters(app: Express.Application): Promise<any> | any {
+  protected initializeMiddlewareAfterRouters(app: express.Application): Promise<any> | any {
     app.use(errorHandler);
   }
 
@@ -253,16 +265,16 @@ export class HttpExtension implements IHttpExtension {
     return routerNames;
   }
 
-  protected onStarted(): Promise<any> | any {return; }
+  protected onStarted(): Promise<any> | any { }
 
-  protected initializeBaseMiddleware(app: Express.Application): void {
+  protected initializeBaseMiddleware(app: express.Application): void {
 
     const options: {[optionName: string]: any} = {};
     if (this.config && this.config.parseLimit) {
       options.limit = this.config.parseLimit;
     }
 
-    options.verify = (req: Request | any, res: Response, buf: any): void => {
+    options.verify = (req: express.Request | any, res: express.Response, buf: any): void => {
       req.rawBody = buf.toString();
     };
     app.use(bodyParser.json(options));
@@ -271,12 +283,13 @@ export class HttpExtension implements IHttpExtension {
   // Taken from the foundation, to remove the need for that package.
   protected async invokeAsPromiseIfPossible(functionToInvoke: any, invocationContext: any, invocationParameter?: Array<any>): Promise<any> {
 
-    const isValidFunction: boolean = typeof functionToInvoke === 'function';
+    const isValidFunction = typeof functionToInvoke === 'function';
 
     if (!isValidFunction) {
-      return;
+      return Promise.resolve();
     }
 
     return await functionToInvoke.call(invocationContext, invocationParameter);
   }
+
 }

@@ -1,0 +1,8 @@
+{
+  "extends": "@essential-projects/eslint-config",
+   "rules": {
+     "no-restricted-syntax": ["off"],
+     "guard-for-in": ["off"],
+     "@typescript-eslint/member-naming": ["off"]
+   }
+}
