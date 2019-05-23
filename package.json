@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "6.6.0",
+  "version": "6.6.1",
   "description": "Extension for discovering and mounting components to an HTTP- or Socket.io- endpoint.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -23,7 +23,7 @@
     "connect-busboy": "~0.0.2",
     "cookie-parser": "~1.4.3",
     "cors": "~2.8.4",
-    "express": "~4.16.4",
+    "express": "^4.16.4",
     "helmet": "~3.15.0",
     "loggerhythm": "~3.0.3",
     "morgan": "~1.9.1",
