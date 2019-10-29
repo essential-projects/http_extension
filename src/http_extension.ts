@@ -18,7 +18,7 @@ import {
 
 import {errorHandler} from './error_handler';
 
-type SocketEndpointCollection = {[socketName: string]: IHttpSocketEndpoint};
+interface ISocketEndpointCollection {[socketName: string]: IHttpSocketEndpoint}
 
 export class HttpExtension implements IHttpExtension {
 
@@ -29,7 +29,7 @@ export class HttpExtension implements IHttpExtension {
 
   private _container: IContainer<IInstanceWrapper<any>> = undefined;
   private _routers: any = {};
-  private _socketEndpoints: SocketEndpointCollection = {};
+  private _socketEndpoints: ISocketEndpointCollection = {};
   private _app: express.Application = undefined;
 
   constructor(container: IContainer<IInstanceWrapper<any>>) {
@@ -42,7 +42,7 @@ export class HttpExtension implements IHttpExtension {
     return this._routers;
   }
 
-  public get socketEndpoints(): SocketEndpointCollection {
+  public get socketEndpoints(): ISocketEndpointCollection {
     return this._socketEndpoints;
   }
 
