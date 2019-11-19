@@ -1,4 +1,4 @@
-import {ErrorCodes, BaseError as EssentialProjectsError, isEssentialProjectsError} from '@essential-projects/errors_ts';
+import {BaseError, ErrorCodes, isEssentialProjectsError} from '@essential-projects/errors_ts';
 import {NextFunction, Request, Response} from 'express';
 import {Logger} from 'loggerhythm';
 
@@ -6,19 +6,17 @@ const logger = Logger
   .createLogger('http_extension')
   .createChildLogger('error_handler');
 
-export function errorHandler(error: Error | EssentialProjectsError, request: Request, response: Response, next: NextFunction): void {
+export function errorHandler(error: BaseError | Error, request: Request, response: Response, next: NextFunction): void {
 
-  let responseMessage = '';
+  const isFromEssentialProjects = isEssentialProjectsError(error);
 
-  if (error instanceof Error) {
-    responseMessage = error.message;
-  } else {
-    logger.warn('Caught something that is not an instanceof Error:', error);
-  }
-
-  const statusCode = isEssentialProjectsError(error)
-    ? error.code
+  const statusCode = isFromEssentialProjects
+    ? (error as BaseError).code
     : ErrorCodes.InternalServerError;
+
+  const responseMessage = isFromEssentialProjects
+    ? JSON.stringify({message: error.message, additionalInformation: (error as BaseError).additionalInformation})
+    : error.message;
 
   logger.info(`${statusCode}`, error);
 
