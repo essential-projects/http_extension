@@ -6,6 +6,8 @@ const logger = Logger
   .createLogger('http_extension')
   .createChildLogger('error_handler');
 
+// NOTE: The function signature must be exact, or express will not recognize it as an error handler
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function errorHandler(error: BaseError | Error, request: Request, response: Response, next: NextFunction): void {
 
   const isFromEssentialProjects = isEssentialProjectsError(error);
