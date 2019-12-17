@@ -1,4 +1,3 @@
-/* eslint-disable no-return-await */
 import {IContainer, IInstanceWrapper} from 'addict-ioc';
 
 import * as bodyParser from 'body-parser';
@@ -13,7 +12,10 @@ import * as socketIo from 'socket.io';
 
 import {routerDiscoveryTag, socketEndpointDiscoveryTag} from '@essential-projects/bootstrapper_contracts';
 import {
-  IHttpExtension, IHttpRouter, IHttpSocketEndpoint, defaultSocketNamespace,
+  IHttpExtension,
+  IHttpRouter,
+  IHttpSocketEndpoint,
+  defaultSocketNamespace,
 } from '@essential-projects/http_contracts';
 
 import {errorHandler} from './error_handler';
@@ -22,45 +24,25 @@ interface ISocketEndpointCollection {[socketName: string]: IHttpSocketEndpoint}
 
 export class HttpExtension implements IHttpExtension {
 
-  public config: any = undefined;
+  public config;
 
-  protected _httpServer: http.Server = undefined;
-  protected _socketServer: SocketIO.Server = undefined;
+  public readonly app: express.Application;
+  public readonly httpServer: http.Server;
 
-  private _container: IContainer<IInstanceWrapper<any>> = undefined;
-  private _routers: any = {};
-  private _socketEndpoints: ISocketEndpointCollection = {};
-  private _app: express.Application = undefined;
+  private container: IContainer<IInstanceWrapper<unknown>>;
+  // eslint-disable-next-line @typescript-eslint/member-naming
+  private _socketServer: SocketIO.Server;
 
-  constructor(container: IContainer<IInstanceWrapper<any>>) {
-    this._container = container;
-  }
+  private routers = {};
+  private socketEndpoints: ISocketEndpointCollection = {};
 
-  // --------------
-  // TODO: Check if it is really necessary to expose all this stuff publicy.
-  public get routers(): any {
-    return this._routers;
-  }
+  constructor(container: IContainer<IInstanceWrapper<unknown>>) {
+    this.container = container;
 
-  public get socketEndpoints(): ISocketEndpointCollection {
-    return this._socketEndpoints;
-  }
-
-  public get container(): IContainer<IInstanceWrapper<any>> {
-    return this._container;
-  }
-
-  public get app(): express.Application {
-    if (!this._app) {
-      this._app = express();
-    }
-
-    return this._app;
-  }
-  // ------------------
-
-  public get httpServer(): http.Server {
-    return this._httpServer;
+    this.app = express();
+    // This notation comes from an external module, which we have no control over.
+    // eslint-disable-next-line
+    this.httpServer = (http as any).Server(this.app);
   }
 
   public get socketServer(): SocketIO.Server {
@@ -69,118 +51,23 @@ export class HttpExtension implements IHttpExtension {
 
   public async initialize(): Promise<void> {
     await this.initializeServer();
-
-    await this.invokeAsPromiseIfPossible(this.initializeAppExtensions, this, this.app as any);
-    this.initializeBaseMiddleware(this.app);
-    await this.invokeAsPromiseIfPossible(this.initializeMiddlewareBeforeRouters, this, this.app as any);
+    await this.initializeAppExtensions();
+    this.initializeBaseMiddleware();
+    await this.initializeMiddlewareBeforeRouters();
     await this.initializeRouters();
-    await this.invokeAsPromiseIfPossible(this.initializeMiddlewareAfterRouters, this, this.app as any);
+    await this.initializeMiddlewareAfterRouters();
 
     await this.initializeSocketEndpoints();
   }
 
-  protected initializeServer(): void {
-    // This notation comes from an external module, which we have no control over.
-    // eslint-disable-next-line
-    this._httpServer = (http as any).Server(this.app);
+  public async start(): Promise<void> {
+    return new Promise(async (resolve: Function, reject: Function): Promise<void> => {
 
-    // TODO: The socket.io typings are currently very much outdated and do not contain the "handlePreflightRequest" option.
-    // It is still functional, though.
-    const corsMiddleware = cors(this.config.cors.options);
-    this._socketServer = socketIo(this.httpServer as any, <any> {
-      handlePreflightRequest: (req: any, res: any): void => {
-        corsMiddleware(req, res, res.end);
-      },
-    });
-  }
-
-  protected async initializeSocketEndpoints(): Promise<void> {
-
-    const allSocketEndpointNames = this.container.getKeysByTags(socketEndpointDiscoveryTag);
-
-    for (const socketEndpointName of allSocketEndpointNames) {
-      await this.initializeSocketEndpoint(socketEndpointName);
-    }
-  }
-
-  protected async initializeRouters(): Promise<void> {
-
-    let routerNames: Array<string>;
-
-    const allRouterNames = this.container.getKeysByTags(routerDiscoveryTag);
-
-    this.container.validateDependencies();
-
-    // TODO: Check if this filtering is used anywhere and remove if it is not.
-    const filteredRouterNames = await this.invokeAsPromiseIfPossible(this.filterRouters, this, allRouterNames);
-
-    if (!filteredRouterNames) {
-      routerNames = [];
-    } else {
-
-      if (!Array.isArray(filteredRouterNames)) {
-        throw new Error('Filtered router names must be of type Array.');
-      }
-
-      routerNames = filteredRouterNames;
-    }
-
-    for (const routerName of routerNames) {
-      await this.initializeRouter(routerName);
-    }
-  }
-
-  protected async initializeRouter(routerName: string): Promise<void> {
-
-    const routerIsNotRegistered = !this.container.isRegistered(routerName);
-    if (routerIsNotRegistered) {
-      throw new Error(`There is no router registered for key '${routerName}'`);
-    }
-
-    const routerInstance = await this.container.resolveAsync<IHttpRouter>(routerName);
-
-    this.bindRoute(routerInstance);
-    this.routers[routerName] = routerInstance;
-  }
-
-  protected bindRoute(routerInstance: any): void {
-
-    // This notation comes from an external module, which we have no control over.
-    // eslint-disable-next-line
-    const shieldingRouter = express.Router();
-
-    shieldingRouter.use(`/${routerInstance.baseRoute}/`, routerInstance.router);
-
-    this.app.use('/', shieldingRouter);
-  }
-
-  protected async initializeSocketEndpoint(socketEndpointName: string): Promise<void> {
-
-    const socketEndpointIsNotRegistered = !this.container.isRegistered(socketEndpointName);
-    if (socketEndpointIsNotRegistered) {
-      throw new Error(`There is no socket endpoint registered for key '${socketEndpointName}'`);
-    }
-
-    const socketEndpointInstance = await this.container.resolveAsync<IHttpSocketEndpoint>(socketEndpointName);
-
-    const socketEndpointHasNamespace = !!socketEndpointInstance.namespace && socketEndpointInstance.namespace !== '';
-    const namespace = socketEndpointHasNamespace
-      ? this._socketServer.of(socketEndpointInstance.namespace)
-      : this._socketServer.of(defaultSocketNamespace);
-
-    await socketEndpointInstance.initializeEndpoint(namespace);
-
-    this.socketEndpoints[socketEndpointName] = socketEndpointInstance;
-  }
-
-  public async start(): Promise<any> {
-    return new Promise(async (resolve: Function, reject: Function): Promise<any> => {
-
-      this._httpServer = this.httpServer.listen(this.config.server.port, this.config.server.host, async (): Promise<void> => {
+      this.httpServer.listen(this.config.server.port, this.config.server.host, async (): Promise<void> => {
 
         try {
-          const onStartedResult = await this.invokeAsPromiseIfPossible(this.onStarted, this);
-          resolve(onStartedResult);
+          await this.onStarted();
+          resolve();
         } catch (error) {
           reject(error);
         }
@@ -194,102 +81,164 @@ export class HttpExtension implements IHttpExtension {
     await this.closeHttpEndpoints();
   }
 
+  protected initializeServer(): Promise<void> | void {
+
+    const corsMiddleware = cors(this.config.cors.options);
+    this._socketServer = socketIo(this.httpServer, {
+      handlePreflightRequest: (req: express.Request, res: express.Response): void => {
+        corsMiddleware(req, res, res.end);
+      },
+    });
+  }
+
+  // Parameter is required for inheritance, though inheriting this function is optional.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected initializeAppExtensions(): Promise<void> | void { }
+
+  protected initializeBaseMiddleware(): void {
+
+    const options = {
+      limit: this.config?.parseLimit,
+      verify: (req: express.Request, res: express.Response, buf: Buffer): void => {
+        (req as any).rawBody = buf.toString(); // eslint-disable-line
+      },
+    };
+    this.app.use(bodyParser.json(options));
+  }
+
+  protected initializeMiddlewareBeforeRouters(): Promise<void> | void {
+    this.app.use(busboy());
+    this.app.use(compression());
+
+    const urlEncodedOptions = {
+      limit: this.config?.parseLimit ?? undefined,
+      extended: true,
+    };
+
+    this.app.use(bodyParser.urlencoded(urlEncodedOptions));
+    this.app.use(cookieParser());
+
+    if (this.config?.cors?.enabled) {
+      this.app.use(cors(this.config.cors.options));
+    }
+
+    // securing http headers with helmet
+    this.app.use(helmet.hidePoweredBy());
+    this.app.use(helmet.noSniff());
+
+    const frameguardOptions = this.config?.frameguard ?? {};
+    this.app.use(helmet.frameguard(frameguardOptions));
+    // https://github.com/helmetjs/x-xss-protection
+    this.app.use(helmet.xssFilter());
+
+    if (this.config.csp) {
+      this.app.use(helmet.contentSecurityPolicy(this.config.csp));
+    }
+  }
+
+  protected async initializeRouters(): Promise<void> {
+
+    this.container.validateDependencies();
+
+    const allRouterNames = this.container.getKeysByTags(routerDiscoveryTag);
+
+    if (!Array.isArray(allRouterNames)) {
+      throw new Error('Router names must be stored in an Array.');
+    }
+
+    for (const routerName of allRouterNames) {
+      await this.initializeRouter(routerName);
+    }
+  }
+
+  protected initializeMiddlewareAfterRouters(): Promise<void> | void {
+    this.app.use(errorHandler);
+  }
+
+  protected async initializeSocketEndpoints(): Promise<void> {
+
+    const allSocketEndpointNames = this.container.getKeysByTags(socketEndpointDiscoveryTag);
+
+    for (const socketEndpointName of allSocketEndpointNames) {
+      await this.initializeSocketEndpoint(socketEndpointName);
+    }
+  }
+
+  protected onStarted(): Promise<void> | void { }
+
+  private async initializeRouter(routerName: string): Promise<void> {
+
+    const routerIsNotRegistered = !this.container.isRegistered(routerName);
+    if (routerIsNotRegistered) {
+      throw new Error(`There is no router registered for key '${routerName}'`);
+    }
+
+    const routerInstance = await this.container.resolveAsync<IHttpRouter>(routerName);
+
+    this.bindRoute(routerInstance);
+    this.routers[routerName] = routerInstance;
+  }
+
+  private bindRoute(routerInstance: IHttpRouter): void {
+
+    // This notation comes from an external module, which we have no control over.
+    // eslint-disable-next-line
+    const shieldingRouter = express.Router();
+
+    shieldingRouter.use(`/${routerInstance.baseRoute}/`, routerInstance.router);
+
+    this.app.use('/', shieldingRouter);
+  }
+
+  private async initializeSocketEndpoint(socketEndpointName: string): Promise<void> {
+
+    const socketEndpointIsNotRegistered = !this.container.isRegistered(socketEndpointName);
+    if (socketEndpointIsNotRegistered) {
+      throw new Error(`There is no socket endpoint registered for key '${socketEndpointName}'`);
+    }
+
+    const socketEndpointInstance = await this.container.resolveAsync<IHttpSocketEndpoint>(socketEndpointName);
+
+    const socketEndpointHasNamespace = socketEndpointInstance?.namespace?.length > 0;
+    const namespace = socketEndpointHasNamespace
+      ? this.socketServer.of(socketEndpointInstance.namespace)
+      : this.socketServer.of(defaultSocketNamespace);
+
+    await socketEndpointInstance.initializeEndpoint(namespace);
+
+    this.socketEndpoints[socketEndpointName] = socketEndpointInstance;
+  }
+
   private async closeSockets(): Promise<void> {
-    const connectedSockets: Array<socketIo.Socket> = Object.values(this.socketServer.of('/').connected);
+    const connectedSockets = Object.values(this.socketServer.of('/').connected);
     for (const socket of connectedSockets) {
       socket.disconnect(true);
     }
 
-    for (const socketName in this.socketEndpoints) {
-      const socketEndpoint: IHttpSocketEndpoint = this.socketEndpoints[socketName];
-      await this.invokeAsPromiseIfPossible(socketEndpoint.dispose, socketEndpoint);
+    const socketNames = Object.keys(this.socketEndpoints);
+    for (const socketName of socketNames) {
+      const socketEndpoint = this.socketEndpoints[socketName];
+      await socketEndpoint.dispose();
     }
   }
 
   private async closeHttpEndpoints(): Promise<void> {
 
-    for (const routerName in this.routers) {
+    const routerNames = Object.keys(this.routers);
+    for (const routerName of routerNames) {
       const router = this.routers[routerName];
-      await this.invokeAsPromiseIfPossible(router.dispose, router);
+      await router.dispose();
     }
 
-    await new Promise(async (resolve: Function, reject: Function): Promise<void> => {
+    await new Promise(async (resolve: Function): Promise<void> => {
       if (this.httpServer) {
-        this._socketServer.close((): void => {
+        this.socketServer.close((): void => {
           this.httpServer.close((): void => {
             resolve();
           });
         });
       }
     });
-  }
-
-  protected initializeAppExtensions(app: express.Application): Promise<any> | any { }
-
-  protected initializeMiddlewareBeforeRouters(app: express.Application): Promise<any> | any {
-    app.use(busboy());
-    app.use(compression());
-    const urlEncodedOpts: any = {
-      extended: true,
-    };
-    if (this.config && this.config.parseLimit) {
-      urlEncodedOpts.limit = this.config.parseLimit;
-    }
-    app.use(bodyParser.urlencoded(urlEncodedOpts));
-    app.use(cookieParser());
-
-    if (this.config.cors.enabled) {
-      app.use(cors(this.config.cors.options));
-    }
-
-    // securing http headers with helmet
-    app.use(helmet.hidePoweredBy());
-    // app.use(helmet.ieNoOpen());
-    app.use(helmet.noSniff());
-
-    const frameguardOptions: any = this.config.frameguard || {};
-    app.use(helmet.frameguard(frameguardOptions));
-    // https://github.com/helmetjs/x-xss-protection
-    app.use(helmet.xssFilter());
-
-    if (this.config.csp) {
-      app.use(helmet.contentSecurityPolicy(this.config.csp));
-    }
-  }
-
-  protected initializeMiddlewareAfterRouters(app: express.Application): Promise<any> | any {
-    app.use(errorHandler);
-  }
-
-  protected filterRouters(routerNames: Array<string>): Promise<Array<string>> | Array<string> {
-    return routerNames;
-  }
-
-  protected onStarted(): Promise<any> | any { }
-
-  protected initializeBaseMiddleware(app: express.Application): void {
-
-    const options: {[optionName: string]: any} = {};
-    if (this.config && this.config.parseLimit) {
-      options.limit = this.config.parseLimit;
-    }
-
-    options.verify = (req: express.Request | any, res: express.Response, buf: any): void => {
-      req.rawBody = buf.toString();
-    };
-    app.use(bodyParser.json(options));
-  }
-
-  // Taken from the foundation, to remove the need for that package.
-  protected async invokeAsPromiseIfPossible(functionToInvoke: any, invocationContext: any, invocationParameter?: Array<any>): Promise<any> {
-
-    const isValidFunction = typeof functionToInvoke === 'function';
-
-    if (!isValidFunction) {
-      return Promise.resolve();
-    }
-
-    return await functionToInvoke.call(invocationContext, invocationParameter);
   }
 
 }

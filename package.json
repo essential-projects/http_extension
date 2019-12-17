@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "6.7.3",
+  "version": "7.0.0",
   "description": "Extension for discovering and mounting components to an HTTP- or Socket.io- endpoint.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -40,7 +40,8 @@
     "@types/node": "^12.11.7",
     "@types/socket.io": "^2.1.0",
     "@types/socket.io-client": "^1.4.32",
-    "typescript": "^3.4.5"
+    "eslint": "^6.6.0",
+    "typescript": "^3.7.2"
   },
   "scripts": {
     "clean": "rm -rf dist",
