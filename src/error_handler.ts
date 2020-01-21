@@ -20,7 +20,7 @@ export function errorHandler(error: BaseError | Error, request: Request, respons
   if (isFromEssentialProjects) {
     responseMessage = JSON.stringify({message: error.message, additionalInformation: (error as BaseError).additionalInformation});
   } else {
-    const expectJsonAsResponse: boolean = request.headers['content-type'] === 'application/json';
+    const expectJsonAsResponse = request.headers['content-type'] === 'application/json';
 
     responseMessage = expectJsonAsResponse ? JSON.stringify({message: error.message}) : error.message;
   }
