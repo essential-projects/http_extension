@@ -16,9 +16,14 @@ export function errorHandler(error: BaseError | Error, request: Request, respons
     ? (error as BaseError).code
     : ErrorCodes.InternalServerError;
 
-  const responseMessage = isFromEssentialProjects
-    ? JSON.stringify({message: error.message, additionalInformation: (error as BaseError).additionalInformation})
-    : error.message;
+  let responseMessage;
+  if (isFromEssentialProjects) {
+    responseMessage = JSON.stringify({message: error.message, additionalInformation: (error as BaseError).additionalInformation});
+  } else {
+    const expectJsonAsResponse: boolean = request.headers['content-type'] === 'application/json';
+
+    responseMessage = expectJsonAsResponse ? JSON.stringify({message: error.message}) : error.message;
+  }
 
   logger.info(`${statusCode}`, error);
 
